@@ -1,4 +1,4 @@
-<div data-th-fragment="left-sidebar">
+<div data-th-fragment="left-sidebar(activeMenuItem)">
     <div class="nav-left-sidebar sidebar-dark">
         <div class="menu-list">
             <nav class="navbar navbar-expand-lg navbar-light">
@@ -28,10 +28,10 @@
                             <div id="submenu-1" class="collapse submenu" style="">
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">User Create</a>
+                                        <a class="nav-link" data-th-href="@{/user/create}" data-th-classappend="${activeMenuItem == 'userCreate'} ? 'active' : _">Create User</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Project Create</a>
+                                        <a class="nav-link" data-th-href="@{/project/create}" data-th-classappend="${activeMenuItem == 'projectCreate'} ? 'active' : _">Create Project</a>
                                     </li>
                                 </ul>
                             </div>
@@ -48,11 +48,11 @@
                             <div id="submenu-2" class="collapse submenu" style="">
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Task Create
+                                        <a class="nav-link" data-th-href="@{/task/create}" data-th-classappend="${activeMenuItem == 'taskCreate'} ? 'active' : _">Create Task
                                             <span class="badge badge-secondary">New</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Project Status</a>
+                                        <a class="nav-link" data-th-href="@{/manager/project-status}" data-th-classappend="${activeMenuItem == 'projectStatus'} ? 'active' : _">Project Status</a>
                                     </li>
                                 </ul>
                             </div>
@@ -69,10 +69,10 @@
                             <div id="submenu-3" class="collapse submenu" style="">
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Pending Tasks</a>
+                                        <a class="nav-link" data-th-href="@{task/pending-tasks}" data-th-classappend="${activeMenuItem == 'pendingTask'} ? 'active' : _">Pending Tasks</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Archive</a>
+                                        <a class="nav-link" data-th-href="@{task/archive}" data-th-classappend="${activeMenuItem == 'archive'} ? 'active' : _">Archive</a>
                                     </li>
                                 </ul>
                             </div>
