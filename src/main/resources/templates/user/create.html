@@ -33,8 +33,17 @@
 
                                 <div class="panel-body">
 
+                                    <div class="alert alert-danger" role="alert" data-th-if="${deletedUser}">
+                                        User with ID [[${deletedUser}]] has been deleted.
+                                    </div>
+
+                                    <div class="alert alert-success" role="alert" data-th-if="${createdUser}">
+                                        User with ID [[${createdUser}]] has been created.
+                                    </div>
+
                                     <!-- ------------------------FORM START----------------------------- -->
-                                    <form data-th-action="@{create}" method="post" class="needs-validation" data-th-object="${user}" novalidate>
+                                    <form data-th-action="@{create}" method="post" class="needs-validation"
+                                          data-th-object="${user}" novalidate>
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
@@ -45,7 +54,8 @@
                                                            data-th-field="*{firstName}" data-th-value="*{firstName}">
                                                     <div class="invalid-feedback d-flex flex-column"
                                                          data-th-if="${#fields.hasErrors('firstName')}">
-                                                             <span data-th-each="error : ${#fields.errors('firstName')}" data-th-text="${error}"></span>
+                                                        <span data-th-each="error : ${#fields.errors('firstName')}"
+                                                              data-th-text="${error}"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -59,7 +69,8 @@
                                                            data-th-field="*{lastName}" data-th-value="*{lastName}">
                                                     <div class="invalid-feedback d-flex flex-column"
                                                          data-th-if="${#fields.hasErrors('lastName')}">
-                                                        <span data-th-each="error : ${#fields.errors('lastName')}" data-th-text="${error}"></span>
+                                                        <span data-th-each="error : ${#fields.errors('lastName')}"
+                                                              data-th-text="${error}"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -76,7 +87,8 @@
                                                            data-th-field="*{userName}" data-th-value="*{userName}">
                                                     <div class="invalid-feedback d-flex flex-column"
                                                          data-th-if="${#fields.hasErrors('userName')}">
-                                                        <span data-th-each="error : ${#fields.errors('userName')}" data-th-text="${error}"></span>
+                                                        <span data-th-each="error : ${#fields.errors('userName')}"
+                                                              data-th-text="${error}"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -87,10 +99,12 @@
                                                     <input type="text" class="form-control"
                                                            data-th-errorclass="${'is-invalid'}"
                                                            id="phoneNumber"
-                                                           data-th-field="*{phoneNumber}" data-th-value="*{phoneNumber}">
+                                                           data-th-field="*{phoneNumber}"
+                                                           data-th-value="*{phoneNumber}">
                                                     <div class="invalid-feedback d-flex flex-column"
                                                          data-th-if="${#fields.hasErrors('phoneNumber')}">
-                                                        <span data-th-each="error : ${#fields.errors('phoneNumber')}" data-th-text="${error}"></span>
+                                                        <span data-th-each="error : ${#fields.errors('phoneNumber')}"
+                                                              data-th-text="${error}"></span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -106,7 +120,8 @@
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="repassword" class="col-form-label">Confirm Password</label>
+                                                    <label for="repassword" class="col-form-label">Confirm
+                                                        Password</label>
                                                     <input id="repassword" type="password" class="form-control">
                                                 </div>
                                             </div>
@@ -116,17 +131,24 @@
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
                                                     <label class="col-form-label d-flex flex-row">Gender</label>
-                                                    <label class="custom-control custom-radio custom-control-inline" data-th-each="gender : ${genders}">
-                                                        <input type="radio" name="radio-inline" data-th-field="${user.gender}" data-th-value="${gender.name()}"  class="custom-control-input">
-                                                        <span class="custom-control-label" data-th-text="${gender}"></span>
+                                                    <label class="custom-control custom-radio custom-control-inline"
+                                                           data-th-each="possibleGender : ${genders}">
+                                                        <input type="radio" th:id="${'gender-'+ possibleGender}"
+                                                               class="custom-control-input"
+                                                               data-th-field="${user.gender}"
+                                                               data-th-value="${possibleGender.name()}">
+                                                        <span class="custom-control-label"
+                                                              data-th-text="${possibleGender}"></span>
                                                     </label>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="role" class="col-form-label d-flex flex-row">Choose a Role</label>
-                                                    <select id="role" name="role" class="custom-select" data-th-field="${user.roleDTO}">
+                                                    <label for="role" class="col-form-label d-flex flex-row">Choose a
+                                                        Role</label>
+                                                    <select id="role" name="role" class="custom-select"
+                                                            data-th-field="${user.roleDTO}">
                                                         <option value="" data-th-text="Select"></option>
                                                         <option data-th-each="role : ${roles}"
                                                                 data-th-value="${(role.id)}"
@@ -190,14 +212,14 @@
                                                 <td data-th-text="*{phoneNumber}"></td>
                                                 <td data-th-text="*{roleDTO.description}"></td>
                                                 <td class="actions">
-                                                    <a href="#">
-                                                        <button type="button" class="btn btn-warning btn-sm">Update
-                                                        </button>
+                                                    <a href="javascript:void(0)">
+                                                        <button type="button" class="btn btn-warning btn-sm">Update</button>
                                                     </a>
-                                                    <a href="#" class="delete-row">
-                                                        <button type="button" class="btn btn-secondary btn-sm">Delete
-                                                        </button>
+                                                    <a data-th-href="@{/user/{username}/delete(username = *{userName})}"
+                                                       class="delete-row">
+                                                        <button type="submit" class="btn btn-secondary btn-sm">Delete</button>
                                                     </a>
+
                                                 </td>
                                             </tr>
 
