@@ -3,16 +3,16 @@
 <html lang="en">
 
 <head data-th-replace="~{fragments/head :: head(~{::title})}">
-    <title>Update User - TicketMastery</title>
+    <title>Create User - TicketMastery</title>
 </head>
 
 <body>
 
 <div class="dashboard-main-wrapper">
 
-    <div data-th-replace="~{/fragments/header :: header}"></div>
+    <div data-th-replace="~{fragments/header :: header}"></div>
 
-    <div data-th-replace="~{/fragments/left-sidebar :: left-sidebar}"></div>
+    <div data-th-replace="~{fragments/left-sidebar :: left-sidebar(userCreate)}"></div>
 
     <div class="dashboard-wrapper">
 
@@ -28,25 +28,42 @@
 
                             <section class="panel panel-transparent">
                                 <header class="panel-heading">
-                                    <h2 class="panel-title">User Update</h2>
+                                    <h2 class="panel-title">Create User</h2>
                                 </header>
 
                                 <div class="panel-body">
 
                                     <!-- ------------------------FORM START----------------------------- -->
-                                    <form class="needs-validation" action="#">
+                                    <form data-th-action="@{/user/{username}/edit(username = *{userName})}" method="post" class="needs-validation"
+                                          data-th-object="${user}" novalidate>
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="firstname" class="col-form-label">First Name</label>
-                                                    <input id="firstname" type="text" placeholder="first name" class="form-control">
+                                                    <label for="firstName" class="col-form-label">First Name</label>
+                                                    <input type="text" class="form-control"
+                                                           data-th-errorclass="${'is-invalid'}"
+                                                           id="firstName"
+                                                           data-th-field="*{firstName}" data-th-value="*{firstName}">
+                                                    <div class="invalid-feedback d-flex flex-column"
+                                                         data-th-if="${#fields.hasErrors('firstName')}">
+                                                        <span data-th-each="error : ${#fields.errors('firstName')}"
+                                                              data-th-text="${error}"></span>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="lastname" class="col-form-label">Last Name</label>
-                                                    <input id="lastname" type="text" placeholder="last name" class="form-control">
+                                                    <label for="lastName" class="col-form-label">Last Name</label>
+                                                    <input type="text" class="form-control"
+                                                           data-th-errorclass="${'is-invalid'}"
+                                                           id="lastName"
+                                                           data-th-field="*{lastName}" data-th-value="*{lastName}">
+                                                    <div class="invalid-feedback d-flex flex-column"
+                                                         data-th-if="${#fields.hasErrors('lastName')}">
+                                                        <span data-th-each="error : ${#fields.errors('lastName')}"
+                                                              data-th-text="${error}"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -54,15 +71,33 @@
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="emailaddress" class="col-form-label">Email Address</label>
-                                                    <input id="emailaddress" type="text" placeholder="email address" class="form-control">>
+                                                    <label for="userName" class="col-form-label">Email
+                                                        Address</label>
+                                                    <input type="email" class="form-control"
+                                                           data-th-errorclass="${'is-invalid'}"
+                                                           id="userName"
+                                                           data-th-field="*{userName}" data-th-value="*{userName}">
+                                                    <div class="invalid-feedback d-flex flex-column"
+                                                         data-th-if="${#fields.hasErrors('userName')}">
+                                                        <span data-th-each="error : ${#fields.errors('userName')}"
+                                                              data-th-text="${error}"></span>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="phonenumber" class="col-form-label">Phone Number</label>
-                                                    <input id="phonenumber" type="tel" placeholder="phone number" class="form-control">
+                                                    <label for="phoneNumber" class="col-form-label">Phone Number</label>
+                                                    <input type="text" class="form-control"
+                                                           data-th-errorclass="${'is-invalid'}"
+                                                           id="phoneNumber"
+                                                           data-th-field="*{phoneNumber}"
+                                                           data-th-value="*{phoneNumber}">
+                                                    <div class="invalid-feedback d-flex flex-column"
+                                                         data-th-if="${#fields.hasErrors('phoneNumber')}">
+                                                        <span data-th-each="error : ${#fields.errors('phoneNumber')}"
+                                                              data-th-text="${error}"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -71,14 +106,15 @@
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
                                                     <label for="password" class="col-form-label">Password</label>
-                                                    <input id="password" type="password" placeholder="password" class="form-control">
+                                                    <input id="password" class="form-control" type="password">
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label for="repassword" class="col-form-label">Confirm Password</label>
-                                                    <input id="repassword" type="password" placeholder="confirm your password" class="form-control">
+                                                    <label for="repassword" class="col-form-label">Confirm
+                                                        Password</label>
+                                                    <input id="repassword" type="password" class="form-control">
                                                 </div>
                                             </div>
                                         </div>
@@ -86,22 +122,29 @@
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label>Gender</label><br>
-                                                    <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Male</span>
+                                                    <label class="col-form-label d-flex flex-row">Gender</label>
+                                                    <label class="custom-control custom-radio custom-control-inline"
+                                                           data-th-each="possibleGender : ${genders}">
+                                                        <input type="radio" data-th-id="${'gender-'+ possibleGender}"
+                                                               class="custom-control-input"
+                                                               data-th-field="${user.gender}"
+                                                               data-th-value="${possibleGender.name()}">
+                                                        <span class="custom-control-label"
+                                                              data-th-text="${possibleGender}"></span>
                                                     </label>
-                                                    <label class="custom-control custom-radio custom-control-inline">
-                                                        <input type="radio" name="radio-inline" class="custom-control-input"><span class="custom-control-label">Female</span>
-                                                    </label>
-
                                                 </div>
                                             </div>
 
                                             <div class="col-sm-6 col-md-6">
                                                 <div class="form-group">
-                                                    <label>Choose a Role</label>
-                                                    <select name="role" class="custom-select">
-                                                        <option></option>
+                                                    <label for="role" class="col-form-label d-flex flex-row">Choose a
+                                                        Role</label>
+                                                    <select id="role" name="role" class="custom-select"
+                                                            data-th-field="${user.roleDTO}">
+                                                        <option value="0" data-th-text="Select"></option>
+                                                        <option data-th-each="role : ${roles}"
+                                                                data-th-value="${(role.id)}"
+                                                                data-th-text="${role.description}"></option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -110,6 +153,7 @@
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6 col-lg-12">
                                                 <div class="float-right">
+                                                    <a data-th-href="@{/user/create}" class="btn btn-danger">Cancel</a>
                                                     <button type="submit" class="btn btn-success">Save</button>
                                                 </div>
                                             </div>
@@ -127,7 +171,6 @@
                     </div>
 
                 </div>
-
 
 
                 <!-- ------------------------TABLE START----------------------------- -->
@@ -155,20 +198,48 @@
 
                                             <tbody>
 
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr data-th-each="user, itemStat: ${users}" data-th-object="${user}">
+                                                <td data-th-text="|*{firstName} *{lastName}|"></td>
+                                                <td data-th-text="*{userName}"></td>
+                                                <td data-th-text="*{gender}"></td>
+                                                <td data-th-text="*{phoneNumber}"></td>
+                                                <td data-th-text="*{roleDTO.description}"></td>
                                                 <td class="actions">
-                                                    <a href="#"><button type="button" class="btn btn-warning btn-sm">Update</button></a>
-                                                    <a href="#" class="delete-row"><button type="button" class="btn btn-secondary btn-sm">Delete</button></a>
+                                                    <a data-th-href="@{/user/{username}/edit(username = *{userName})}">
+                                                        <button type="button" class="btn btn-warning btn-sm">Update</button>
+                                                    </a>
+                                                    <button type="button" data-th-data-delete="@{/user/{username}/delete(username = *{userName})}"
+                                                            class="delete-row btnDelete btn btn-danger btn-sm" data-th-data-userName="${user.userName}">
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
 
                                             </tbody>
                                         </table>
+                                        <div class="modal fade text-center" id="confirmModal">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Delete Confirmation</h5>
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <span id="confirmText"></span>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </section>
@@ -184,7 +255,7 @@
 
     </div>
 
-    <div data-th-replace="~{/fragments/footer :: footer}"></div>
+    <div data-th-replace="~{fragments/footer :: footer}"></div>
 
 </div>
 

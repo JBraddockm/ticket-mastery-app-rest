@@ -66,4 +66,38 @@ public class UserController {
 
         return "redirect:/user/create";
     }
+
+    @GetMapping("{username}/edit")
+    public String editUser(@PathVariable("username") String username, Model model){
+        // TODO findByID should return Optional<T>.
+        UserDTO user = Optional.ofNullable(userService.findById(username))
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        model.addAttribute("user", user);
+        model.addAttribute("users", userService.findAll());
+
+        return "user/update";
+    }
+
+    @PostMapping("{username}/edit")
+    public String editUser(@ModelAttribute UserDTO userDTO, @PathVariable("username") String username, RedirectAttributes redirectAttributes){
+
+//        userService.update(userDTO);
+
+        UserDTO user = Optional.ofNullable(userService.findById(username))
+                .orElseThrow(() -> new UserNotFoundException(username));
+
+        if(user.getUserName().equals(userDTO.getUserName())){
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPhoneNumber(userDTO.getPhoneNumber());
+            user.setGender(userDTO.getGender());
+            user.setRoleDTO(userDTO.getRoleDTO());
+            redirectAttributes.addFlashAttribute("updatedUser",user.getUserName());
+        } else {
+            redirectAttributes.addFlashAttribute("updateError", "Error Message");
+        }
+
+        return "redirect:/user/create";
+    }
 }

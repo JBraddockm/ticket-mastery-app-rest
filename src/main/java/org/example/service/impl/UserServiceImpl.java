@@ -2,7 +2,6 @@ package org.example.service.impl;
 
 import org.example.dto.UserDTO;
 import org.example.service.UserService;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,5 +32,15 @@ public class UserServiceImpl extends AbstractMapService<UserDTO, String> impleme
     @Override
     public void deleteById(String userName) {
         super.deleteById(userName);
+    }
+
+    @Override
+    public void update(UserDTO userDTO) {
+        super.update(userDTO.getUserName(), userDTO);
+    }
+
+    @Override
+    public List<UserDTO> findAllManagers() {
+        return super.findAll().stream().filter(userDTO -> userDTO.getRoleDTO().getId() == 2L).toList();
     }
 }
