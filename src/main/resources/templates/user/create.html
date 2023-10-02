@@ -41,6 +41,14 @@
                                         User with ID [[${createdUser}]] has been created.
                                     </div>
 
+                                    <div class="alert alert-warning" role="alert" data-th-if="${updatedUser}">
+                                        User with ID [[${updatedUser}]] has been updated.
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" data-th-if="${updateError}">
+                                        [[${updateError}]]
+                                    </div>
+
                                     <!-- ------------------------FORM START----------------------------- -->
                                     <form data-th-action="@{create}" method="post" class="needs-validation"
                                           data-th-object="${user}" novalidate>
@@ -205,26 +213,49 @@
 
                                             <tbody>
 
-                                            <tr data-th-each="user: ${users}" data-th-object="${user}">
-                                                <td data-th-text="*{firstName}"></td>
+                                            <tr data-th-each="user, itemStat: ${users}" data-th-object="${user}">
+                                                <td data-th-text="|*{firstName} *{lastName}|"></td>
                                                 <td data-th-text="*{userName}"></td>
                                                 <td data-th-text="*{gender}"></td>
                                                 <td data-th-text="*{phoneNumber}"></td>
                                                 <td data-th-text="*{roleDTO.description}"></td>
                                                 <td class="actions">
-                                                    <a href="javascript:void(0)">
-                                                        <button type="button" class="btn btn-warning btn-sm">Update</button>
+                                                    <a data-th-href="@{/user/{username}/edit(username = *{userName})}">
+                                                        <button type="button" class="btn btn-warning btn-sm">Update
+                                                        </button>
                                                     </a>
-                                                    <a data-th-href="@{/user/{username}/delete(username = *{userName})}"
-                                                       class="delete-row">
-                                                        <button type="submit" class="btn btn-secondary btn-sm">Delete</button>
-                                                    </a>
-
+                                                    <button type="button" data-th-data-delete="@{/user/{username}/delete(username = *{userName})}"
+                                                       class="delete-row btnDelete btn btn-danger btn-sm" data-th-data-userName="${user.userName}">
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
 
                                             </tbody>
                                         </table>
+                                        <div class="modal fade text-center" id="confirmModal">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Delete Confirmation</h5>
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <span id="confirmText"></span>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </section>

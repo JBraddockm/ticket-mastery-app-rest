@@ -20,7 +20,20 @@
     <script data-th-src="@{/assets/vendor/charts/c3charts/d3-5.4.0.min.js}"></script>
     <script data-th-src="@{/assets/vendor/charts/c3charts/C3chartjs.js}"></script>
     <script data-th-src="@{/assets/libs/js/dashboard-ecommerce.js}"></script>
-    <script data-th-src="@{/assets/vendor/datepicker/tempusdominus-bootstrap-4.js}"></script>
     <script data-th-src="@{/assets/vendor/datepicker/moment.js}"></script>
+    <script data-th-src="@{/assets/vendor/datepicker/tempusdominus-bootstrap-4.js}"></script>
     <script data-th-src="@{/assets/vendor/datepicker/datepicker.js}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".btnDelete").on("click", function (e) {
+                e.preventDefault();
+                const link = $(this);
+
+                const userName = link.attr("data-userName");
+                $("#yesBtn").attr("href", link.attr("data-delete"));
+                $("#confirmText").html("Do you want to delete the user \<strong\>" + userName + "\<\/strong\>?");
+                $("#confirmModal").modal();
+            });
+        });
+    </script>
 </div>
