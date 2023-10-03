@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html  lang="en">
+<html lang="en">
 
 <head data-th-replace="~{fragments/head :: head(~{::title})}">
     <title>Create Project - TicketMastery</title>
@@ -34,27 +34,42 @@
                                 <div class="panel-body">
 
                                     <div class="alert alert-success" role="alert" data-th-if="${createdProject}">
-                                        Project with code [[${createdProject}]] has been created.
+                                        Project [[${createdProject}]] has been created.
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" data-th-if="${deletedProject}">
+                                        Project [[${deletedProject}]] has been deleted.
+                                    </div>
+
+                                    <div class="alert alert-warning" role="alert" data-th-if="${updatedProject}">
+                                        Project [[${updatedProject}]] has been updated.
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" data-th-if="${updateError}">
+                                        [[${updateError}]]
                                     </div>
 
                                     <!-- ------------------------FORM START----------------------------- -->
                                     <form data-th-action="@{/project/create}" method="post" data-th-object="${project}">
                                         <input type="hidden" data-th-field="*{projetStatus}"/>
-<!--                                        <input type="hidden" name="projetStatus" value="OPEN">-->
 
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="project-name" class="col-form-label">Project Name</label>
-                                                    <input id="project-name" type="text" class="form-control" data-th-field="*{projectName}">
+                                                    <label for="project-name" class="col-form-label">Project
+                                                        Name</label>
+                                                    <input id="project-name" type="text" class="form-control"
+                                                           data-th-field="*{projectName}">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="project-code" class="col-form-label">Project Code</label>
-                                                    <input id="project-code" type="text" class="form-control" data-th-field="*{projectCode}">
+                                                    <label for="project-code" class="col-form-label">Project
+                                                        Code</label>
+                                                    <input id="project-code" type="text" class="form-control"
+                                                           data-th-field="*{projectCode}">
                                                 </div>
                                             </div>
                                         </div>
@@ -62,7 +77,8 @@
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="manager">Assigned Manager</label>
-                                                    <select id="manager" name="assigned-manager" class="custom-select" data-th-field="${project.projectManager}">
+                                                    <select id="manager" name="assigned-manager" class="custom-select"
+                                                            data-th-field="${project.projectManager}">
                                                         <option value="" data-th-text="Select"></option>
                                                         <option data-th-each="manager: ${managers}"
                                                                 data-th-value="${manager.userName}"
@@ -75,13 +91,15 @@
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="startDate">Project Start Date</label>
-                                                    <input id="startDate" type="date" class="form-control" data-th-field="*{projectStartDate}">
+                                                    <input id="startDate" type="date" class="form-control"
+                                                           data-th-field="*{projectStartDate}">
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="form-group">
                                                     <label for="endDate">Project End Date</label>
-                                                    <input id="endDate" type="date" class="form-control" data-th-field="*{projectEndDate}">
+                                                    <input id="endDate" type="date" class="form-control"
+                                                           data-th-field="*{projectEndDate}">
                                                 </div>
                                             </div>
                                         </div>
@@ -96,7 +114,8 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="float-right">
-                                                    <button class="btn btn-success rounded-0" type="submit">Save</button>
+                                                    <button class="btn btn-success rounded-0" type="submit">Save
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -112,7 +131,6 @@
                     </div>
 
                 </div>
-
 
 
                 <!-- ------------------------TABLE START----------------------------- -->
@@ -145,13 +163,43 @@
                                                 <td data-th-text="|*{projectManager.firstName} *{projectManager.lastName}|"></td>
                                                 <td data-th-text="*{projetStatus}"></td>
                                                 <td>
-                                                    <a href="#"><button type="button" class="btn btn-warning rounded-0">Update</button></a>
-                                                    <a href="#"><button type="button" class="btn btn-danger rounded-0">Delete</button></a>
-                                                    <a href="#"><button type="button" class="btn btn-info rounded-0">Complete</button></a>
+                                                    <a data-th-href="@{/project/{projectCode}/edit(projectCode = *{projectCode})}">
+                                                        <button type="button" class="btn btn-warning rounded-0">Update</button>
+                                                    </a>
+                                                    <button type="button" data-th-data-url="@{/project/{projectCode}/delete(projectCode = *{projectCode})}"
+                                                            class="delete-row btnModal btn btn-danger rounded-0" data-th-data-process="${project.projectCode}" data-th-data-type="'delete'">
+                                                        Delete
+                                                    </button>
+                                                    <button type="button" data-th-data-url="@{/project/{projectCode}/complete(projectCode = *{projectCode})}"
+                                                            class="delete-row btn btn-info rounded-0" data-th-data-process="${project.projectCode}" data-th-data-type="'complete'" data-th-classappend="*{projetStatus.equals(projetStatus.COMPLETED)} ? 'disabled' : 'btnModal'">
+                                                        Complete
+                                                    </button>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <div class="modal fade text-center" id="confirmModal">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <span id="confirmText"></span>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </section>
