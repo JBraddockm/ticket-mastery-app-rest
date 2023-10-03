@@ -82,17 +82,11 @@ public class UserController {
     @PostMapping("{username}/edit")
     public String editUser(@ModelAttribute UserDTO userDTO, @PathVariable("username") String username, RedirectAttributes redirectAttributes){
 
-//        userService.update(userDTO);
-
         UserDTO user = Optional.ofNullable(userService.findById(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
 
         if(user.getUserName().equals(userDTO.getUserName())){
-            user.setFirstName(userDTO.getFirstName());
-            user.setLastName(userDTO.getLastName());
-            user.setPhoneNumber(userDTO.getPhoneNumber());
-            user.setGender(userDTO.getGender());
-            user.setRoleDTO(userDTO.getRoleDTO());
+            userService.update(userDTO);
             redirectAttributes.addFlashAttribute("updatedUser",user.getUserName());
         } else {
             redirectAttributes.addFlashAttribute("updateError", "Error Message");
