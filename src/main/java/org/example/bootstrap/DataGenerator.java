@@ -76,7 +76,7 @@ public class DataGenerator implements CommandLineRunner {
 
         Map<String, ProjectDTO> initialProjects = Map.of(
                 "PR001", new ProjectDTO("Spring MVC", "PR001", manager, LocalDate.now(), LocalDate.now().plusDays(25), "Creating Controllers", Status.OPEN),
-                "PR002", new ProjectDTO("Spring ORM", "PR002", admin, LocalDate.now(), LocalDate.now().plusDays(10), "Creating Database", Status.IN_PROGRESS),
+                "PR002", new ProjectDTO("Spring ORM", "PR002", manager, LocalDate.now(), LocalDate.now().plusDays(10), "Creating Database", Status.IN_PROGRESS),
                 "PR003", new ProjectDTO("Spring Container", "PR003", manager, LocalDate.now(), LocalDate.now().plusDays(32), "Creating Container", Status.IN_PROGRESS)
         );
 
