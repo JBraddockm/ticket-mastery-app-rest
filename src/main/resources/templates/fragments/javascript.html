@@ -25,13 +25,14 @@
     <script data-th-src="@{/assets/vendor/datepicker/datepicker.js}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
-            $(".btnDelete").on("click", function (e) {
+            $(".btnModal").on("click", function (e) {
                 e.preventDefault();
                 const link = $(this);
 
-                const userName = link.attr("data-userName");
-                $("#yesBtn").attr("href", link.attr("data-delete"));
-                $("#confirmText").html("Do you want to delete the user \<strong\>" + userName + "\<\/strong\>?");
+                const process = link.attr("data-process");
+                const type = link.attr("data-type");
+                $("#yesBtn").attr("href", link.attr("data-url"));
+                $("#confirmText").html("Do you want to " + type + " \<strong\>" + process + "\<\/strong\>?");
                 $("#confirmModal").modal();
             });
         });
