@@ -16,7 +16,7 @@
                     <ul class="navbar-nav flex-column">
                         <li class="nav-divider"></li>
                         <li class="nav-item">
-                            <a class="nav-link active"
+                            <a class="nav-link"
                                href="#"
                                data-toggle="collapse"
                                aria-expanded="false"
@@ -52,7 +52,7 @@
                                             <span class="badge badge-secondary">New</span></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-th-href="@{/manager/project-status}" data-th-classappend="${activeMenuItem == 'projectStatus'} ? 'active' : _">Project Status</a>
+                                        <a class="nav-link" data-th-href="@{/project/manager/project-status}" data-th-classappend="${activeMenuItem == 'projectStatus'} ? 'active' : _">Project Status</a>
                                     </li>
                                 </ul>
                             </div>
@@ -69,10 +69,10 @@
                             <div id="submenu-3" class="collapse submenu" style="">
                                 <ul class="nav flex-column">
                                     <li class="nav-item">
-                                        <a class="nav-link" data-th-href="@{task/pending-tasks}" data-th-classappend="${activeMenuItem == 'pendingTask'} ? 'active' : _">Pending Tasks</a>
+                                        <a class="nav-link" data-th-href="@{/task/employee/pending-tasks}" data-th-classappend="${activeMenuItem == 'pendingTask'} ? 'active' : _">Pending Tasks</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" data-th-href="@{task/archive}" data-th-classappend="${activeMenuItem == 'archive'} ? 'active' : _">Archive</a>
+                                        <a class="nav-link" data-th-href="@{/task/employee/archive}" data-th-classappend="${activeMenuItem == 'archive'} ? 'active' : _">Archive</a>
                                     </li>
                                 </ul>
                             </div>
