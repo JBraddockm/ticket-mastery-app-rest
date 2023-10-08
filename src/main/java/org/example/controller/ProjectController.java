@@ -32,7 +32,7 @@ public class ProjectController {
     }
 
     @ModelAttribute("status")
-    private Status getAllStatus() {
+    private Status getStatusOpen() {
         return Status.OPEN;
     }
 
@@ -47,6 +47,7 @@ public class ProjectController {
         projectDTO.setProjetStatus(Status.OPEN);
 
         model.addAttribute("project", projectDTO);
+
         return "project/create";
     }
 
@@ -60,6 +61,7 @@ public class ProjectController {
         return "redirect:/project/create";
     }
 
+    //TODO Deleting a project should delete associated tasks.
     @GetMapping("{projectID}/delete")
     public String deleteProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes) {
 
@@ -67,9 +69,9 @@ public class ProjectController {
         ProjectDTO projectDTO = Optional.ofNullable(projectService.findById(projectID))
                 .orElseThrow(() -> new ProjectNotFoundException(projectID));
 
-        projectService.deleteById(projectID);
+        projectService.deleteById(projectDTO.getProjectCode());
 
-        redirectAttributes.addFlashAttribute("deletedProject", projectDTO.getProjectCode());
+        redirectAttributes.addFlashAttribute("deletedProject",projectDTO.getProjectCode());
 
         return "redirect:/project/create";
     }
@@ -103,8 +105,8 @@ public class ProjectController {
         return "redirect:/project/create";
     }
 
-    @GetMapping("{projectID}/complete")
-    public String completeProject(@PathVariable("projectID") String projectID){
+    @GetMapping("/{projectID}/complete")
+    public String completeProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes){
 
         // TODO findByID should return Optional<T>.
         ProjectDTO project = Optional.ofNullable(projectService.findById(projectID))
@@ -112,7 +114,33 @@ public class ProjectController {
 
         projectService.complete(project);
 
+        redirectAttributes.addFlashAttribute("completedProject", project.getProjectCode());
+
         return "redirect:/project/create";
+    }
+
+    @GetMapping("/manager/{projectID}/complete")
+    public String managerCompleteProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes){
+
+        // TODO findByID should return Optional<T>.
+        ProjectDTO project = Optional.ofNullable(projectService.findById(projectID))
+                .orElseThrow(() -> new ProjectNotFoundException(projectID));
+
+        projectService.complete(project);
+        redirectAttributes.addFlashAttribute("completedProject", project.getProjectCode());
+
+        return "redirect:/project/manager/project-status";
+    }
+
+    @GetMapping("/manager/project-status")
+    public String getProjectByManager(Model model){
+
+        // TODO Log in will determine the manager after implementing Spring Security.
+        UserDTO manager = userService.findById("johnkelly@example.com");
+
+        model.addAttribute("projects", projectService.getCountedListOfProjectDTO(manager));
+
+        return "manager/project-status";
     }
 
 }

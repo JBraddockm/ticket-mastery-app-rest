@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html  lang="en">
+<html lang="en">
 
 <head data-th-replace="~{fragments/head :: head(~{::title})}">
     <title>Project Status - TicketMastery</title>
@@ -30,6 +30,9 @@
                                     <h2 class="panel-title">Project List</h2>
                                 </header>
                                 <div class="panel-body">
+                                    <div class="alert alert-warning" role="alert" data-th-if="${completedProject}">
+                                        Project [[${completedProject}]] has been completed.
+                                    </div>
                                     <div class="table-responsive">
                                         <table class="table table-striped">
                                             <thead>
@@ -38,24 +41,34 @@
                                                 <th scope="col">Project Name</th>
                                                 <th scope="col">Start/End Date</th>
                                                 <th scope="col">Manager</th>
-                                                <th scope="col">Unfinished/Completed</th>
+                                                <th scope="col">Completed</th>
                                                 <th scope="col">Status</th>
                                                 <th scope="col">Action</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr data-th-each="project : ${projects}" data-th-object="${project}">
+                                                <td data-th-text="*{projectCode}"></td>
+                                                <td data-th-text="*{projectName}"></td>
+                                                <td data-th-text="|${#temporals.format(project.projectStartDate, 'dd/MM/YYYY')} - ${#temporals.format(project.projectEndDate, 'dd/MM/YYYY')}|"></td>
+                                                <td data-th-text="|*{projectManager.firstName} *{projectManager.lastName}|"></td>
                                                 <td>
-                                                    <!--Show this if the project can be completed-->
-                                                    <a class="btn btn-info rounded-0" href="#">Complete</a>
-                                                    <!--Show this if the project can not be completed-->
-                                                    <a class="btn btn-info rounded-0 disabled-button">Complete</a>
+                                                    <div class="progress bg-dark" data-th-with="progress=${((project.completeTaskCounts + 0.0) / (project.unfinishedTaskCounts + project.completeTaskCounts + 0.0)) * 100}">
+                                                        <div class="progress-bar bg-success" role="progressbar" data-th-style="'width:' + ${progress} +'%;'"
+                                                              data-th-aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">
+                                                            <span class="p-5" data-th-with="total=${project.unfinishedTaskCounts + project.completeTaskCounts}">[[${project.completeTaskCounts}]]/[[${total}]]</span>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td data-th-text="*{projetStatus}"></td>
+                                                <td>
+                                                    <a th:if="${project.unfinishedTaskCounts == 0 && project.projetStatus != 'Completed'}"
+                                                       class="btn btn-info rounded-0"
+                                                       th:href="@{/project/manager/{id}/complete(id=${project.projectCode})}">Complete
+                                                    </a>
+                                                    <a th:if="${project.unfinishedTaskCounts > 0 || project.projetStatus == 'Completed'}"
+                                                       class="btn btn-info rounded-0 disabled-button">Complete
+                                                    </a>
                                                 </td>
                                             </tr>
                                             </tbody>
