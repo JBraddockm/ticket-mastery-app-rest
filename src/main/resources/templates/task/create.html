@@ -33,15 +33,35 @@
 
                                 <div class="panel-body">
 
+                                    <div class="alert alert-success" role="alert" data-th-if="${createdTask}">
+                                        Task [[${createdTask}]] has been created.
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" data-th-if="${deletedTask}">
+                                        Task [[${deletedTask}]] has been deleted.
+                                    </div>
+
+                                    <div class="alert alert-warning" role="alert" data-th-if="${updatedTask}">
+                                        Task [[${updatedTask}]] has been updated.
+                                    </div>
+
+                                    <div class="alert alert-danger" role="alert" data-th-if="${updateError}">
+                                        [[${updateError}]]
+                                    </div>
+
                                     <!-- ------------------------FORM START----------------------------- -->
-                                    <form action="#">
-
+                                    <form data-th-action="@{/task/create}" method="post" data-th-object="${task}">
+                                        <input type="hidden" data-th-field="*{assignedDate}"/>
+                                        <input type="hidden" data-th-field="*{status}"/>
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label>Project</label>
-                                                    <select name="project" class="custom-select">
-                                                        <option></option>
+                                                    <label for="project">Project</label>
+                                                    <select id="project" name="project" class="custom-select" data-th-field="*{project}">
+                                                        <option value="" data-th-text="Select"></option>
+                                                        <option data-th-each="project : ${projects}"
+                                                                data-th-value="${(project.projectCode)}"
+                                                                data-th-text="${project.projectName}"></option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -50,9 +70,12 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label>Assigned Employee</label>
-                                                    <select name="assignedemployee" class="custom-select">
-                                                        <option></option>
+                                                    <label for="assignedEmployee">Assigned Employee</label>
+                                                    <select id="assignedEmployee" name="assignedEmployee" class="custom-select" data-th-field="*{assignedEmployee}">
+                                                        <option value="" data-th-text="Select"></option>
+                                                        <option data-th-each="employee : ${employees}"
+                                                                data-th-value="${(employee.userName)}"
+                                                                data-th-text="|${employee.firstName} ${employee.lastName}|"></option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -61,9 +84,8 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="tasksubject" class="col-form-label">Task Subject</label>
-                                                    <input id="tasksubject" type="text" class="form-control"
-                                                           placeholder="task subject">
+                                                    <label for="taskSubject" class="col-form-label">Task Subject</label>
+                                                    <input id="taskSubject" type="text" class="form-control" data-th-field="*{taskSubject}">
                                                 </div>
                                             </div>
                                         </div>
@@ -71,9 +93,8 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="form-group">
-                                                    <label for="taskdetail">Task Detail</label>
-                                                    <textarea id="taskdetail" class="form-control"
-                                                              placeholder="task detail"></textarea>
+                                                    <label for="taskDetail">Task Detail</label>
+                                                    <textarea id="taskDetail" class="form-control" data-th-field="*{taskDetail}"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -81,8 +102,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="float-right">
-                                                    <button class="btn btn-success rounded-0" type="submit">Save
-                                                    </button>
+                                                    <button class="btn btn-success rounded-0" type="submit">Save</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -125,19 +145,44 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr data-th-each="task: ${tasks}" data-th-object="${task}">
+                                                <td data-th-text="*{project.projectName}"></td>
+                                                <td data-th-text="*{taskSubject}"></td>
+                                                <td data-th-text="|*{assignedEmployee.firstName} *{assignedEmployee.lastName}|"></td>
+                                                <td data-th-text="${#temporals.format(task.assignedDate, 'dd/MM/YYYY')}"></td>
+                                                <td data-th-text="*{status}"></td>
                                                 <td class="actions">
-                                                    <a href="#" class="btn btn-warning rounded-0">Update</a>
-                                                    <a href="#" class="btn btn-danger rounded-0">Delete</a>
+                                                    <a data-th-href="@{/task/{taskID}/edit(taskID = *{id})}" class="btn btn-warning rounded-0">Update</a>
+                                                    <button type="button" data-th-data-url="@{/task/{taskID}/delete(taskID = *{id})}"
+                                                            class="delete-row btnModal btn btn-danger rounded-0" data-th-data-process="${task.id}" data-th-data-type="'delete'">
+                                                        Delete
+                                                    </button>
                                                 </td>
                                             </tr>
                                             </tbody>
                                         </table>
+                                        <div class="modal fade text-center" id="confirmModal">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <span id="confirmText"></span>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </section>
