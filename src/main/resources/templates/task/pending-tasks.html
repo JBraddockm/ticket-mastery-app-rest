@@ -34,7 +34,7 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th scope="col">Project </th>
+                                                <th scope="col">Project</th>
                                                 <th scope="col">Task Subject</th>
                                                 <th scope="col">Assigned Employee</th>
                                                 <th scope="col">Assigned Date</th>
@@ -43,14 +43,14 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
+                                            <tr data-th-each="task : ${tasks}">
+                                                <td data-th-text="${task.project.projectName}"></td>
+                                                <td data-th-text="${task.taskSubject}"></td>
+                                                <td data-th-text="|${task.assignedEmployee.firstName} ${task.assignedEmployee.lastName}|"></td>
+                                                <td data-th-text="${#temporals.format(task.assignedDate, 'dd/MM/YYYY')}"></td>
+                                                <td data-th-text="${task.status}"></td>
                                                 <td>
-                                                    <a href="#" class="btn btn-warning rounded-0">Update</a>
+                                                    <a data-th-href="@{/task/employee/edit/{id}(id = ${task.id})}" class="btn btn-warning rounded-0">Update</a>
                                                 </td>
                                             </tr>
                                             </tbody>
