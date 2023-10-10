@@ -3,6 +3,8 @@ package org.example.config;
 import net.datafaker.Faker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import java.util.Locale;
 
@@ -11,5 +13,15 @@ public class AppConfig {
     @Bean
     Faker faker() {
         return new Faker(new Locale("en", "GB"));
+    }
+
+    @Bean
+    public ITemplateResolver svgTemplateResolver() {
+        SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
+        resolver.setPrefix("classpath:/static/svg/");
+        resolver.setSuffix(".svg");
+        resolver.setTemplateMode("XML");
+
+        return resolver;
     }
 }

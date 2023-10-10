@@ -10,11 +10,11 @@ public class LoginController {
 
     @GetMapping({"/login","/"})
     public String login(){
-        return "login";
+        return "new-login";
     }
 
     @GetMapping("/welcome")
     public String welcome(){
-        return "welcome";
+        return "new-welcome";
     }
 }

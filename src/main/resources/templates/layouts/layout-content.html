@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">TicketMaster</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"  rel="stylesheet"/>
+    <link rel="stylesheet" data-th-href="@{/css/application.css}">
+    <script>
+        if (
+            localStorage.getItem("color-theme") === "dark" ||
+            (!("color-theme" in localStorage) &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+            document.documentElement.classList.add("dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-800">
+
+<nav data-th-replace="~{fragments/navbar/navbar-fixed}">Navbar</nav>
+<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <aside data-th-replace="~{fragments/sidebar/sidebar-menu}">Sidebar</aside>
+    <div class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/90" id="sidebarBackdrop"></div>
+    <div id="main-content" class="relative w-full h-full overflow-y-auto bg-gray-50 lg:ml-64 dark:bg-gray-900">
+        <main>
+            <div class="px-4 pt-6">
+                <div layout:fragment="page-content">Page Content</div>
+            </div>
+        </main>
+        <footer data-th-replace="~{fragments/footer/footer}">Footer</footer>
+    </div>
+</div>
+<script type="text/javascript" data-th-src="@{/js/app.bundle.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/datepicker.min.js"></script>
+
+<th:block layout:fragment="page-scripts">
+</th:block>
+</body>
+</html>
