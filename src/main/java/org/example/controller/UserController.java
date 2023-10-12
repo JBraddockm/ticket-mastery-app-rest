@@ -107,7 +107,7 @@ public class UserController {
 
         if (user.getUserName().equals(updatedUser.getUserName())) {
             userService.update(updatedUser);
-            redirectAttributes.addFlashAttribute("updatedUser", updatedUser.getUserName());
+            redirectAttributes.addFlashAttribute("updatedUserName", updatedUser.getUserName());
         } else {
             redirectAttributes.addFlashAttribute("updateError", "Error Message");
         }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout-content}" lang="en">
 <!--/*@thymesVar id="deletedUserName" type="java.lang.String"*/-->
+<!--/*@thymesVar id="updatedUserName" type="java.lang.String"*/-->
 <head>
     <title>All Users</title>
 </head>
@@ -111,7 +112,7 @@
                                 <a data-th-href="@{/user/{username}/new-edit(username = *{userName})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                     <svg data-th-replace="~{icon-edit}"></svg>
                                 </a>
-                                <button data-th-data-url="@{/user/{username}/new-delete(username = *{userName})}" type="button" data-modal-toggle="delete-user-modal" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                <button data-th-data-delete-endpoint="@{/user/{username}/new-delete(username = *{userName})}" type="button" data-modal-toggle="delete-user-modal" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
                                     <svg data-th-replace="~{icon-delete}"></svg>
                                 </button>
                             </td>
@@ -177,18 +178,9 @@
             </div>
         </div>
     </div>
-
-    <div id="toast-danger" data-th-if="${deletedUserName}" class="flex fixed bottom-5 right-5 items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-gray-50 rounded-lg shadow-lg dark:text-gray-400 dark:bg-gray-900" role="alert">
-        <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
-            <svg data-th-replace="~{icon-danger}"></svg>
-            <span class="sr-only">Error icon</span>
-        </div>
-        <div class="ml-3 text-sm font-normal">[[${deletedUserName}]] has been deleted.</div>
-        <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-danger" aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg data-th-replace="~{icon-close}"></svg>
-        </button>
-    </div>
+    <!--/*-->Toast Notifications<!--*/-->
+    <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedUserName}, message = |${deletedUserName} has been deleted| )}">User has been deleted</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedUserName}, message = |${updatedUserName} has been updated| )}">User has been updated</div>
 
 </div>
 </body>
@@ -201,32 +193,22 @@
                     e.preventDefault();
                     const link = this;
 
-                    const process = link.getAttribute("data-process");
-                    const type = link.getAttribute("data-type");
-                    const url = link.getAttribute("data-url");
-
-                    console.log(url);
-
+                    const url = link.getAttribute("data-delete-endpoint");
                     const yesBtn = document.getElementById("deleteForm");
-                    const confirmText = document.getElementById("confirmText");
 
                     yesBtn.setAttribute("action", url);
-                    confirmText.innerHTML = "Do you want to " + type + " <strong>" + process + "</strong>?";
-
-                    const confirmModal = document.getElementById("confirmModal");
-                    confirmModal.style.display = "block"; // Assuming modal is a block element
                 });
             });
         });
 
         document.addEventListener("DOMContentLoaded", function () {
-            // Show the toast
-            // document.getElementById("myToast").classList.remove("hidden");
-            // Hide the toast after 5 seconds (5000ms)
-            // you can set a shorter/longer time by replacing "5000" with another number
-            setTimeout(function () {
-                document.getElementById("toast-danger").classList.add("hidden");
-            }, 5000);
+            const toastElements = document.querySelectorAll(".toast"); // Assuming each toast notification has a class 'toast'
+
+            toastElements.forEach(function (toastElement) {
+                setTimeout(function () {
+                    toastElement.classList.add("hidden");
+                }, 5000);
+            });
         });
 
     </script>
