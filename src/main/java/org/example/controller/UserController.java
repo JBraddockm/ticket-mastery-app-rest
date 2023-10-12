@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.RoleDTO;
 import org.example.dto.UserDTO;
 import org.example.enums.Gender;
@@ -8,6 +9,7 @@ import org.example.service.RoleService;
 import org.example.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,65 +35,83 @@ public class UserController {
     }
 
     @ModelAttribute("roles")
-    public List<RoleDTO> getRoles(){
+    public List<RoleDTO> getRoles() {
         return roleService.findAll();
     }
 
-    @GetMapping("/create")
-    public String createUser(Model model){
-        model.addAttribute("user", new UserDTO());
+    // New
+    @GetMapping("/all")
+    public String viewAllUsers(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "user/create";
+        return "user/new-list";
     }
 
-    @PostMapping("/create")
-    public String createUser(@ModelAttribute UserDTO userDTO, RedirectAttributes redirectAttributes){
+    @GetMapping("/new-create")
+    public String newCreateUser(UserDTO user, Model model) {
 
-        userService.save(userDTO);
+        model.addAttribute("user", user);
 
-        redirectAttributes.addFlashAttribute("createdUser",userDTO.getUserName());
-
-        return "redirect:/user/create";
+        return "user/new-create";
     }
 
-    @GetMapping("{username}/delete")
-    public String deleteUser(@PathVariable("username") String username, RedirectAttributes redirectAttributes){
+    @PostMapping("/new-create")
+    public String newCreateUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "user/new-create";
+        } else {
+            userService.save(user);
+            redirectAttributes.addFlashAttribute("createdUser",user.getUserName());
+        }
+
+        return "redirect:/user/all";
+    }
+
+    @PostMapping("{username}/new-delete")
+    public String newDeleteUser(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
+
         // TODO findByID should return Optional<T>.
         UserDTO user = Optional.ofNullable(userService.findById(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
 
         userService.deleteById(username);
 
-        redirectAttributes.addFlashAttribute("deletedUser", user.getUserName());
+        redirectAttributes.addFlashAttribute("deletedUserName", user.getUserName());
 
-        return "redirect:/user/create";
+        return "redirect:/user/all";
     }
 
-    @GetMapping("{username}/edit")
-    public String editUser(@PathVariable("username") String username, Model model){
+    @GetMapping("{username}/new-edit")
+    public String newEditUser(@PathVariable("username") String username, Model model) {
         // TODO findByID should return Optional<T>.
         UserDTO user = Optional.ofNullable(userService.findById(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
 
         model.addAttribute("user", user);
-        model.addAttribute("users", userService.findAll());
 
-        return "user/update";
+        return "user/new-update";
     }
 
-    @PostMapping("{username}/edit")
-    public String editUser(@ModelAttribute UserDTO userDTO, @PathVariable("username") String username, RedirectAttributes redirectAttributes){
+    @PostMapping("{username}/new-edit")
+    public String newEditUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, @PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
 
-        UserDTO user = Optional.ofNullable(userService.findById(username))
+        if (result.hasErrors()) {
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "user/new-update";
+        }
+
+        UserDTO updatedUser = Optional.ofNullable(userService.findById(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        if(user.getUserName().equals(userDTO.getUserName())){
-            userService.update(userDTO);
-            redirectAttributes.addFlashAttribute("updatedUser",user.getUserName());
+
+        if (user.getUserName().equals(updatedUser.getUserName())) {
+            userService.update(updatedUser);
+            redirectAttributes.addFlashAttribute("updatedUser", updatedUser.getUserName());
         } else {
             redirectAttributes.addFlashAttribute("updateError", "Error Message");
         }
 
-        return "redirect:/user/create";
+        return "redirect:/user/all";
     }
 }
