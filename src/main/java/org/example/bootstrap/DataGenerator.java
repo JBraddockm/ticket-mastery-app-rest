@@ -52,20 +52,22 @@ public class DataGenerator implements CommandLineRunner {
 
         // Create an admin and a manager manually.
         UserDTO manager = new UserDTO("John", "Kelly",
-                "johnkelly@example.com", "Abc1", "7459684542", roleService.findAll().get(1), Gender.MALE, true);
+                "johnkelly@example.com", "Abc1", "Abc1", "7459684542", roleService.findAll().get(1), Gender.MALE, true);
         UserDTO admin = new UserDTO("Josh", "Brown",
-                "johsbrown@example.com", "Abc1", "7459684549", roleService.findAll().get(0), Gender.MALE, true);
+                "johsbrown@example.com", "Abc1", "Abc1", "7459684549", roleService.findAll().get(0), Gender.MALE, true);
 
         users.put(manager.getUserName(), manager);
         users.put(admin.getUserName(), admin);
 
         IntStream.rangeClosed(0, 10).forEach(i -> {
             String username = faker.internet().emailAddress();
+            String password = faker.internet().password();
             users.put(username, new UserDTO(
                             faker.name().firstName(),
                             faker.name().lastName(),
                             username,
-                            faker.internet().password(),
+                            password,
+                            password,
                             faker.phoneNumber().cellPhone(),
                             // Create only users.
                             roleService.findAll().get(2),
