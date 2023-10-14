@@ -1,230 +1,128 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
-<head data-th-replace="~{fragments/head :: head(~{::title})}">
-    <title>Create Project - TicketMastery</title>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout-content}" lang="en">
+<head>
+    <title>Create Project</title>
 </head>
-
-<body>
-
-<div class="dashboard-main-wrapper">
-
-    <div data-th-replace="~{fragments/header :: header}"></div>
-
-    <div data-th-replace="~{fragments/left-sidebar :: left-sidebar(projectCreate)}"></div>
-
-    <div class="dashboard-wrapper">
-
-        <div class="dashboard-ecommerce">
-
-            <div class="container-fluid dashboard-content">
-
-                <div class="ecommerce-widget">
-
-                    <div class="row">
-
-                        <div class="col-lg-6 col-md-12">
-
-                            <section class="panel panel-transparent">
-                                <header class="panel-heading">
-                                    <h2 class="panel-title">Project Create</h2>
-                                </header>
-
-                                <div class="panel-body">
-
-                                    <div class="alert alert-success" role="alert" data-th-if="${createdProject}">
-                                        Project [[${createdProject}]] has been created.
-                                    </div>
-
-                                    <div class="alert alert-danger" role="alert" data-th-if="${deletedProject}">
-                                        Project [[${deletedProject}]] has been deleted.
-                                    </div>
-
-                                    <div class="alert alert-warning" role="alert" data-th-if="${updatedProject}">
-                                        Project [[${updatedProject}]] has been updated.
-                                    </div>
-
-                                    <div class="alert alert-warning" role="alert" data-th-if="${completedProject}">
-                                        Project [[${completedProject}]] has been completed.
-                                    </div>
-
-                                    <div class="alert alert-danger" role="alert" data-th-if="${updateError}">
-                                        [[${updateError}]]
-                                    </div>
-
-                                    <!-- ------------------------FORM START----------------------------- -->
-                                    <form data-th-action="@{/project/create}" method="post" data-th-object="${project}">
-                                        <input type="hidden" data-th-field="*{projetStatus}"/>
-
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="project-name" class="col-form-label">Project
-                                                        Name</label>
-                                                    <input id="project-name" type="text" class="form-control"
-                                                           data-th-field="*{projectName}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="project-code" class="col-form-label">Project
-                                                        Code</label>
-                                                    <input id="project-code" type="text" class="form-control"
-                                                           data-th-field="*{projectCode}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="manager">Assigned Manager</label>
-                                                    <select id="manager" name="assigned-manager" class="custom-select"
-                                                            data-th-field="${project.projectManager}">
-                                                        <option value="" data-th-text="Select"></option>
-                                                        <option data-th-each="manager: ${managers}"
-                                                                data-th-value="${manager.userName}"
-                                                                data-th-text="|${manager.firstName} ${manager.lastName}|"></option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="startDate">Project Start Date</label>
-                                                    <input id="startDate" type="date" class="form-control"
-                                                           data-th-field="*{projectStartDate}">
-                                                </div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="endDate">Project End Date</label>
-                                                    <input id="endDate" type="date" class="form-control"
-                                                           data-th-field="*{projectEndDate}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="form-group">
-                                                    <label for="project-detail">Project Detail</label>
-                                                    <textarea id="project-detail" class="form-control" data-th-field="*{projectDetail}"></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col">
-                                                <div class="float-right">
-                                                    <button class="btn btn-success rounded-0" type="submit">Save
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                    <!-- ------------------------FORM END----------------------------- -->
-
-                                </div>
-
-                            </section>
-
+<body class="bg-gray-50 dark:bg-gray-800">
+<div layout:fragment="page-content">
+    <div class="grid grid-cols-1 px-4 pt-6 xl:grid-cols-3 xl:gap-4 dark:bg-gray-900">
+        <div class="mb-4 col-span-full xl:mb-2">
+            <nav class="flex mb-5" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
+                    <li class="inline-flex items-center">
+                        <a data-th-href="@{/welcome}" class="inline-flex items-center text-gray-700 hover:text-primary-600 dark:text-gray-300 dark:hover:text-white">
+                            <svg class="w-5 h-5 mr-2.5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                            </svg> Home </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <a data-th-href="@{/project/all}" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white"> Projects </a>
                         </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ------------------------TABLE START----------------------------- -->
-
-                <div class="row">
-                    <div class="col-lg-12 col-md-12">
-                        <div class="col-md-12">
-                            <section class="panel">
-                                <header class="panel-heading">
-                                    <h2 class="panel-title">Project List</h2>
-                                </header>
-                                <div class="panel-body">
-                                    <div class="table-responsive">
-                                        <table class="table table-striped" data-th-object="${projects}">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col">Project Code</th>
-                                                <th scope="col">Project Name</th>
-                                                <th scope="col">Start - End Date</th>
-                                                <th scope="col">Manager</th>
-                                                <th scope="col">Status</th>
-                                                <th scope="col">Action</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr data-th-each="project : ${projects}" data-th-object="${project}">
-                                                <td data-th-text="*{projectCode}"></td>
-                                                <td data-th-text="*{projectName}"></td>
-                                                <td data-th-text="|${#temporals.format(project.projectStartDate, 'dd/MM/YYYY')} - ${#temporals.format(project.projectEndDate, 'dd/MM/YYYY')}|"></td>
-                                                <td data-th-text="|*{projectManager.firstName} *{projectManager.lastName}|"></td>
-                                                <td data-th-text="*{projetStatus}"></td>
-                                                <td>
-                                                    <a data-th-href="@{/project/{projectCode}/edit(projectCode = *{projectCode})}">
-                                                        <button type="button" class="btn btn-warning rounded-0">Update</button>
-                                                    </a>
-                                                    <button type="button" data-th-data-url="@{/project/{projectCode}/delete(projectCode = *{projectCode})}"
-                                                            class="delete-row btnModal btn btn-danger rounded-0" data-th-data-process="${project.projectCode}" data-th-data-type="'delete'">
-                                                        Delete
-                                                    </button>
-                                                    <button type="button" data-th-data-url="@{/project/{projectCode}/complete(projectCode = *{projectCode})}"
-                                                            class="delete-row btn btn-info rounded-0" data-th-data-process="${project.projectCode}" data-th-data-type="'complete'" data-th-classappend="*{projetStatus.equals(projetStatus.COMPLETED)} ? 'disabled' : 'btnModal'">
-                                                        Complete
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                        <div class="modal fade text-center" id="confirmModal">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal">
-                                                            <span aria-hidden="true">×</span>
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="modal-body">
-                                                        <span id="confirmText"></span>
-                                                    </div>
-
-                                                    <div class="modal-footer">
-                                                        <a type="button" id="yesBtn" class="btn btn-danger">Yes</a>
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-dismiss="modal">No
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="ml-1 text-gray-400 md:ml-2 dark:text-gray-500" aria-current="page"> Create Project </span>
                         </div>
-                    </div>
-                </div>
-
-                <!-- ------------------------TABLE END----------------------------- -->
-
-            </div>
-
+                    </li>
+                </ol>
+            </nav>
+            <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"> Project Details </h1>
         </div>
+        <!-- Right Content -->
+        <div class="col-span-full xl:col-auto">
+            <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                <div class="items-center sm:flex xl:block 2xl:flex sm:space-x-4 xl:space-x-0 2xl:space-x-4">
+                    <img class="mb-4 rounded-lg w-28 h-28 sm:mb-0 xl:mb-4 2xl:mb-0" src="/images/users/bonnie-green-2x.png" alt="Jese picture" />
+                    <div>
+                        <h3 class="mb-1 text-xl font-bold text-gray-900 dark:text-white"> Profile picture </h3>
+                        <div class="mb-4 text-sm text-gray-500 dark:text-gray-400"> JPG, GIF or PNG. Max size of 800K </div>
+                        <div class="flex items-center space-x-4">
+                            <button type="button" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                <svg class="w-4 h-4 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"></path>
+                                    <path d="M9 13h2v5a1 1 0 11-2 0v-5z"></path>
+                                </svg> Upload picture </button>
+                            <button type="button" class="py-2 px-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"> Delete </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-2">
+            <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
+                <span class="hidden bg-green-50 border-green-500 text-green-900 dark:border-green-400"></span>
+                <form data-th-action="@{/project/create}" method="post" data-th-object="${project}">
+                    <input type="hidden" data-th-field="*{projectStatus}"/>
+                    <div class="grid grid-cols-6 gap-6">
+                        <div class="col-span-full sm:col-full">
+                            <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Project Name </label>
+                            <input type="text" id="first-name" data-th-field="*{projectName}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectName')} ? ${isValid} : _" class="shadow-sm border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectName')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectName')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="last-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Project Code </label>
+                            <input type="text" id="last-name" data-th-field="*{projectCode}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectCode')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectCode')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectCode')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="managers" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Assigned Manager</label>
+                            <select id="managers" data-th-field="${project.projectManager}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectManager')} ? ${isValid} : _" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                <option value="">Select a Role</option>
+                                <option data-th-each="manager : ${managers}"
+                                        data-th-value="${manager.userName}"
+                                        data-th-text="|${manager.firstName} ${manager.lastName}|">
+                                </option>
+                            </select>
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectManager')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectManager')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
 
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="start-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Start Date </label>
+                            <input type="date" id="start-date" data-th-field="*{projectStartDate}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectStartDate')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectStartDate')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectStartDate')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-span-6 sm:col-span-3">
+                            <label for="end-date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Due Date </label>
+                            <input type="date" id="end-date" data-th-field="*{projectEndDate}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectEndDate')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectEndDate')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectEndDate')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-span-full sm:col-full">
+                            <label for="project-detail" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Project Detail </label>
+                            <textarea id="project-detail" data-th-field="*{projectDetail}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectDetail')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"></textarea>
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('projectDetail')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('projectDetail')}" data-th-text="${error}"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-span-6 sm:col-full">
+                            <button class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800" type="submit">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-
-    <div data-th-replace="~{fragments/footer :: footer}"></div>
-
 </div>
-
-<div data-th-replace="~{fragments/javascript :: js}"></div>
-
 </body>
-
 </html>

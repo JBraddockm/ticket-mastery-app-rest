@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout-content}" lang="en">
+<!--/*@thymesVar id="deletedProject" type="java.lang.String"*/-->
+<!--/*@thymesVar id="updatedProject" type="java.lang.String"*/-->
+<!--/*@thymesVar id="createdProject" type="java.lang.String"*/-->
 <!--/*@thymesVar id="completedProject" type="java.lang.String"*/-->
 <head>
-    <title>Projects Status</title>
+    <title>All Projects</title>
 </head>
 <body class="bg-gray-50 dark:bg-gray-800">
 <div layout:fragment="page-content">
@@ -19,7 +22,7 @@
                         <li>
                             <div class="flex items-center">
                                 <svg data-th-replace="~{icon-right-arrow}"></svg>
-                                <a data-th-href="@{/project/manager/project-status}" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Projects</a>
+                                <a data-th-href="@{/project/all}" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Projects</a>
                             </div>
                         </li>
                         <li>
@@ -30,7 +33,7 @@
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Project Status</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">All projects</h1>
             </div>
             <div class="sm:flex">
                 <div class="items-center hidden mb-3 sm:flex sm:divide-x sm:divide-gray-100 sm:mb-0 dark:divide-gray-700">
@@ -58,8 +61,8 @@
                     </div>
                 </div>
                 <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
-                    <a  data-th-href="@{/task/create}" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                        <svg data-th-replace="~{icon-plus}"></svg> Add task
+                    <a  data-th-href="@{/project/create}" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                        <svg data-th-replace="~{icon-plus}"></svg> Add project
                     </a>
                     <a href="#" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
                         <svg data-th-replace="~{icon-export}"></svg> Export
@@ -85,7 +88,6 @@
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Project Name </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Start & End Dates </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Manager </th>
-                            <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Progress </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Status </th>
                             <th scope="col" class="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"> Actions </th>
                         </tr>
@@ -102,15 +104,6 @@
                             <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white" data-th-text="*{projectName}"> Spring MVC</td>
                             <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white" data-th-text="|${#temporals.format(project.projectStartDate, 'dd/MM/YYYY')} - ${#temporals.format(project.projectEndDate, 'dd/MM/YYYY')}|"> 01/01/2023-02/03/2023</td>
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white" data-th-text="|*{projectManager.firstName} *{projectManager.lastName}|"></td>
-                            <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white" data-th-with="progress=${((project.completeTaskCounts + 0.0) / (project.unfinishedTaskCounts + project.completeTaskCounts + 0.0)) * 100}">
-                                <div class="flex justify-between mb-1">
-                                    <span data-th-with="total=${project.unfinishedTaskCounts + project.completeTaskCounts}" class="text-base font-medium text-blue-700 dark:text-white">[[${project.completeTaskCounts}]]/[[${total}]]</span>
-                                    <span class="text-sm font-medium text-blue-700 dark:text-white" data-th-with="percentageRounded=${#numbers.formatDecimal(progress, 2, 0)}">[[${percentageRounded}]]%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-                                    <div class="bg-purple-600 h-2.5 rounded-full" data-th-style="'width:' + ${progress} +'%;'"></div>
-                                </div>
-                            </td>
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div class="flex items-center">
                                     <div class="h-2.5 w-2.5 rounded-full mr-2" data-th-classappend="*{projectStatus.equals(projectStatus.OPEN)} ? ${'bg-yellow-500'}  : (*{projectStatus.equals(projectStatus.IN_PROGRESS)} ? ${'bg-orange-500'} : ${'bg-purple-500'})"></div>
@@ -118,11 +111,17 @@
                                 </div>
                             </td>
                             <td class="p-4 space-x-2 whitespace-nowrap">
-                                <button title="Complete" data-th-if="*{not projectStatus.equals(projectStatus.COMPLETED)}" type="button" data-th-data-post-endpoint="@{/project/manager/{projectCode}/complete(projectCode = *{projectCode})}" data-th-data-process="${project.projectCode}" data-th-data-modal-type="'complete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-purple-600 rounded-lg hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">
+                                <a title="Edit" data-th-href="@{/project/{projectCode}/edit(projectCode = *{projectCode})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                    <svg data-th-replace="~{icon-edit}"></svg>
+                                </a>
+                                <button title="Complete" data-th-if="*{not projectStatus.equals(projectStatus.COMPLETED)}" type="button" data-th-data-post-endpoint="@{/project/{projectCode}/complete(projectCode = *{projectCode})}" data-th-data-process="${project.projectCode}" data-th-data-modal-type="'complete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-purple-600 rounded-lg hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">
                                     <svg data-th-replace="~{icon-document-check}"></svg>
                                 </button>
                                 <button title="Completed" disabled data-th-if="*{projectStatus.equals(projectStatus.COMPLETED)}" type="button" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-600 rounded-lg hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-900">
                                     <svg data-th-replace="~{icon-document-check}"></svg>
+                                </button>
+                                <button title="Delete" type="button" data-th-data-post-endpoint="@{/project/{projectCode}/delete(projectCode = *{projectCode})}" data-th-data-process="${project.projectCode}" data-th-data-modal-type="'delete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                    <svg data-th-replace="~{icon-delete}"></svg>
                                 </button>
                             </td>
                         </tr>
@@ -165,6 +164,9 @@
     <div data-th-replace="~{fragments/components/popup-modal :: modal}"></div>
 
     <!--/*-->Toast Notifications<!--*/-->
+    <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedProject}, message = |${deletedProject} has been deleted| )}">Project has been deleted</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedProject}, message = |${updatedProject} has been updated| )}">Project has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${createdProject}, message = |${createdProject} has been created| )}">Project has been created</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${completedProject}, message = |${completedProject} has been completed| )}">Project has been completed</div>
 
 </div>

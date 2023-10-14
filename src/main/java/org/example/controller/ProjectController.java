@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.ProjectDTO;
 import org.example.dto.UserDTO;
 import org.example.enums.Status;
@@ -8,6 +9,7 @@ import org.example.service.ProjectService;
 import org.example.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,11 +28,6 @@ public class ProjectController {
         this.userService = userService;
     }
 
-    @ModelAttribute("projects")
-    private List<ProjectDTO> getAllProjects() {
-        return projectService.findAll();
-    }
-
     @ModelAttribute("status")
     private Status getStatusOpen() {
         return Status.OPEN;
@@ -41,99 +38,113 @@ public class ProjectController {
         return userService.findAllManagers();
     }
 
+    @GetMapping("all")
+    private String viewAllProjects(Model model) {
+        model.addAttribute("projects", projectService.findAll());
+        return "project/list";
+    }
+
     @GetMapping("/create")
-    public String createProject(Model model, ProjectDTO projectDTO) {
+    public String newCreateProject(Model model, ProjectDTO project) {
 
-        projectDTO.setProjetStatus(Status.OPEN);
-
-        model.addAttribute("project", projectDTO);
+        project.setProjectStatus(Status.OPEN);
+        model.addAttribute("project", project);
 
         return "project/create";
     }
 
     @PostMapping("/create")
-    public String createProject(@ModelAttribute ProjectDTO projectDTO, RedirectAttributes redirectAttributes) {
+    public String newCreateProject(@Valid @ModelAttribute("project") ProjectDTO project, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
-        projectService.save(projectDTO);
+        if (result.hasErrors()) {
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "project/create";
+        } else {
+            projectService.save(project);
+            redirectAttributes.addFlashAttribute("createdProject", project.getProjectCode());
+        }
 
-        redirectAttributes.addFlashAttribute("createdProject", projectDTO.getProjectCode());
-
-        return "redirect:/project/create";
+        return "redirect:/project/all";
     }
 
-    //TODO Deleting a project should delete associated tasks.
-    @GetMapping("{projectID}/delete")
-    public String deleteProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes) {
+    @PostMapping("{projectCode}/delete")
+    public String newDeleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes){
 
         // TODO findByID should return Optional<T>.
-        ProjectDTO projectDTO = Optional.ofNullable(projectService.findById(projectID))
-                .orElseThrow(() -> new ProjectNotFoundException(projectID));
+        ProjectDTO deletedProject = Optional.ofNullable(projectService.findById(projectCode))
+                .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
-        projectService.deleteById(projectDTO.getProjectCode());
+        if (deletedProject.getProjectCode().equals(projectCode)) {
+            projectService.deleteById(projectCode);
+            redirectAttributes.addFlashAttribute("deletedProject", deletedProject.getProjectCode());
+        }
 
-        redirectAttributes.addFlashAttribute("deletedProject",projectDTO.getProjectCode());
-
-        return "redirect:/project/create";
+        return "redirect:/project/all";
     }
 
-    @GetMapping("{projectID}/edit")
-    public String updateProject(@PathVariable("projectID") String projectID, Model model) {
+    @GetMapping("{projectCode}/edit")
+    public String newUpdateProject(@PathVariable("projectCode") String projectCode, Model model) {
 
         // TODO findByID should return Optional<T>.
-        ProjectDTO projectDTO = Optional.ofNullable(projectService.findById(projectID))
-                .orElseThrow(() -> new ProjectNotFoundException(projectID));
+        ProjectDTO project = Optional.ofNullable(projectService.findById(projectCode))
+                .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
-        model.addAttribute("project", projectDTO);
+        model.addAttribute("project", project);
 
         return "project/update";
     }
 
-    @PostMapping("{projectID}/edit")
-    public String updateProject(@ModelAttribute ProjectDTO projectDTO, @PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes){
+    @PostMapping("{projectCode}/edit")
+    public String newUpdateProject(@Valid @ModelAttribute("project") ProjectDTO project, BindingResult result, @PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes, Model model) {
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO project = Optional.ofNullable(projectService.findById(projectID))
-                .orElseThrow(() -> new ProjectNotFoundException(projectID));
-
-        if(project.getProjectCode().equals(projectDTO.getProjectCode())){
-            projectService.update(projectDTO);
-            redirectAttributes.addFlashAttribute("updatedProject",project.getProjectCode());
-        } else {
-            redirectAttributes.addFlashAttribute("updateError", "Error Message");
+        if (result.hasErrors()) {
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "project/update";
         }
 
-        return "redirect:/project/create";
+        // TODO findByID should return Optional<T>.
+        ProjectDTO updatedProject = Optional.ofNullable(projectService.findById(projectCode))
+                .orElseThrow(() -> new ProjectNotFoundException(projectCode));
+
+        if (updatedProject.getProjectCode().equals(project.getProjectCode())) {
+            projectService.update(project);
+            redirectAttributes.addFlashAttribute("updatedProject", project.getProjectCode());
+        }
+
+        return "redirect:/project/all";
     }
 
-    @GetMapping("/{projectID}/complete")
-    public String completeProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes){
+    @PostMapping("{projectCode}/complete")
+    public String newCompleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes){
 
         // TODO findByID should return Optional<T>.
-        ProjectDTO project = Optional.ofNullable(projectService.findById(projectID))
-                .orElseThrow(() -> new ProjectNotFoundException(projectID));
+        ProjectDTO completedProject = Optional.ofNullable(projectService.findById(projectCode))
+                .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
-        projectService.complete(project);
+        if (completedProject.getProjectCode().equals(projectCode)) {
+            projectService.complete(completedProject);
+            redirectAttributes.addFlashAttribute("completedProject", completedProject.getProjectCode());
+        }
 
-        redirectAttributes.addFlashAttribute("completedProject", project.getProjectCode());
+        return "redirect:/project/all";
 
-        return "redirect:/project/create";
     }
 
-    @GetMapping("/manager/{projectID}/complete")
-    public String managerCompleteProject(@PathVariable("projectID") String projectID, RedirectAttributes redirectAttributes){
+    @PostMapping("/manager/{projectCode}/complete")
+    public String newManagerCompleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes) {
 
         // TODO findByID should return Optional<T>.
-        ProjectDTO project = Optional.ofNullable(projectService.findById(projectID))
-                .orElseThrow(() -> new ProjectNotFoundException(projectID));
+        ProjectDTO completedProject = Optional.ofNullable(projectService.findById(projectCode))
+                .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
-        projectService.complete(project);
-        redirectAttributes.addFlashAttribute("completedProject", project.getProjectCode());
+        projectService.complete(completedProject);
+        redirectAttributes.addFlashAttribute("completedProject", completedProject.getProjectCode());
 
         return "redirect:/project/manager/project-status";
     }
 
     @GetMapping("/manager/project-status")
-    public String getProjectByManager(Model model){
+    public String newGetProjectByManager(Model model) {
 
         // TODO Log in will determine the manager after implementing Spring Security.
         UserDTO manager = userService.findById("johnkelly@example.com");
