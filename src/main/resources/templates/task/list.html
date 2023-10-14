@@ -5,7 +5,7 @@
 <!--/*@thymesVar id="createdTask" type="java.lang.String"*/-->
 <!--/*@thymesVar id="completedTask" type="java.lang.String"*/-->
 <head>
-    <title>Update Task</title>
+    <title>All Pending Tasks</title>
 </head>
 <body class="bg-gray-50 dark:bg-gray-800">
 <div layout:fragment="page-content">
@@ -22,7 +22,7 @@
                         <li>
                             <div class="flex items-center">
                                 <svg data-th-replace="~{icon-right-arrow}"></svg>
-                                <a data-th-href="@{/task/employee/pending-tasks}" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Tasks</a>
+                                <a data-th-href="@{/task/all}" class="ml-1 text-gray-700 hover:text-primary-600 md:ml-2 dark:text-gray-300 dark:hover:text-white">Tasks</a>
                             </div>
                         </li>
                         <li>
@@ -33,7 +33,7 @@
                         </li>
                     </ol>
                 </nav>
-                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">Pending tasks</h1>
+                <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">All tasks</h1>
             </div>
             <div class="sm:flex">
                 <div class="items-center hidden mb-3 sm:flex sm:divide-x sm:divide-gray-100 sm:mb-0 dark:divide-gray-700">
@@ -62,7 +62,7 @@
                 </div>
                 <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
                     <a  data-th-href="@{/task/create}" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                        <svg data-th-replace="~{icon-plus}"></svg> Add task
+                        <svg data-th-replace="~{icon-plus}"></svg> Assign task
                     </a>
                     <a href="#" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
                         <svg data-th-replace="~{icon-export}"></svg> Export
@@ -93,7 +93,7 @@
                         </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                        <tr data-th-each="task, itemStat: ${pendingTasks}" data-th-object="${task}" class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <tr data-th-each="task, itemStat: ${tasks}" data-th-object="${task}" class="hover:bg-gray-100 dark:hover:bg-gray-700">
                             <td class="w-4 p-4">
                                 <div class="flex items-center">
                                     <input id="checkbox-1" aria-describedby="checkbox-1" type="checkbox" class="w-4 h-4 border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:focus:ring-primary-600 dark:ring-offset-gray-800 dark:bg-gray-700 dark:border-gray-600">
@@ -106,23 +106,23 @@
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white" data-th-text="${#temporals.format(task.assignedDate, 'dd/MM/YYYY')}"></td>
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div class="flex items-center">
-                                    <div class="h-2.5 w-2.5 rounded-full mr-2" data-th-classappend="${task.status.equals(task.status.OPEN)} ? ${'bg-yellow-500'}  : (${task.status.equals(task.status.IN_PROGRESS)} ? ${'bg-orange-500'} : ${'bg-purple-500'})"></div>
-                                    [[${task.status}]]
+                                    <div class="h-2.5 w-2.5 rounded-full mr-2" data-th-classappend="${task.project.projectStatus.equals(task.project.projectStatus.OPEN)} ? ${'bg-yellow-500'}  : (${task.project.projectStatus.equals(task.project.projectStatus.IN_PROGRESS)} ? ${'bg-orange-500'} : ${'bg-purple-500'})"></div>
+                                    [[${task.project.projectStatus}]]
                                 </div>
                             </td>
                             <td class="p-4 space-x-2 whitespace-nowrap">
-                                <a title="Edit" data-th-href="@{/task/employee/{taskID}/edit(taskID = *{id})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                <a title="Edit" data-th-href="@{/task/{taskID}/edit(taskID = *{id})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                     <svg data-th-replace="~{icon-edit}"></svg>
                                 </a>
-                                <!--                                <button title="Complete" data-th-if="*{not projectStatus.equals(projectStatus.COMPLETED)}" type="button" data-th-data-post-endpoint="@{/project/{projectCode}/complete(projectCode = *{projectCode})}" data-th-data-process="${project.projectCode}" data-th-data-modal-type="'complete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-purple-600 rounded-lg hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">-->
-                                <!--                                    <svg data-th-replace="~{icon-document-check}"></svg>-->
-                                <!--                                </button>-->
-                                <!--                                <button title="Completed" disabled data-th-if="*{projectStatus.equals(projectStatus.COMPLETED)}" type="button" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-600 rounded-lg hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-900">-->
-                                <!--                                    <svg data-th-replace="~{icon-document-check}"></svg>-->
-                                <!--                                </button>-->
-<!--                                <button title="Delete" type="button" data-th-data-post-endpoint="@{/task/{taskID}/delete(taskID = *{id})}" data-th-data-process="${task.id}" data-th-data-modal-type="'delete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">-->
-<!--                                    <svg data-th-replace="~{icon-delete}"></svg>-->
+<!--                                <button title="Complete" data-th-if="*{not projectStatus.equals(projectStatus.COMPLETED)}" type="button" data-th-data-post-endpoint="@{/project/{projectCode}/complete(projectCode = *{projectCode})}" data-th-data-process="${project.projectCode}" data-th-data-modal-type="'complete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-purple-600 rounded-lg hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 dark:focus:ring-purple-900">-->
+<!--                                    <svg data-th-replace="~{icon-document-check}"></svg>-->
 <!--                                </button>-->
+<!--                                <button title="Completed" disabled data-th-if="*{projectStatus.equals(projectStatus.COMPLETED)}" type="button" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gray-600 rounded-lg hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-900">-->
+<!--                                    <svg data-th-replace="~{icon-document-check}"></svg>-->
+<!--                                </button>-->
+                                <button title="Delete" type="button" data-th-data-post-endpoint="@{/task/{taskID}/delete(taskID = *{id})}" data-th-data-process="${task.id}" data-th-data-modal-type="'delete'" data-modal-toggle="modal-action" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                    <svg data-th-replace="~{icon-delete}"></svg>
+                                </button>
                             </td>
                         </tr>
                         </tbody>

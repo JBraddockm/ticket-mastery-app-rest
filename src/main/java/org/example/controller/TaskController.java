@@ -1,5 +1,6 @@
 package org.example.controller;
 
+import jakarta.validation.Valid;
 import org.example.dto.ProjectDTO;
 import org.example.dto.TaskDTO;
 import org.example.dto.UserDTO;
@@ -10,6 +11,7 @@ import org.example.service.TaskService;
 import org.example.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -43,36 +45,44 @@ public class TaskController {
         return userService.findAllEmployees();
     }
 
-    @ModelAttribute("tasks")
-    public List<TaskDTO> getAllTasks(){
-        return taskService.findAll();
+    @GetMapping("all")
+    public String viewAllTasks(Model model){
+        model.addAttribute("tasks", taskService.findAll());
+        return "task/list";
     }
 
+    
     @GetMapping("/create")
-    public String createTask(Model model, TaskDTO taskDTO){
+    public String newCreateTask(Model model, TaskDTO task){
 
-        model.addAttribute("task", taskDTO);
+        model.addAttribute("task", task);
 
         return "task/create";
     }
 
     @PostMapping("/create")
-    public String createTask(@ModelAttribute TaskDTO taskDTO, RedirectAttributes redirectAttributes){
+    public String newCreateTask(@Valid @ModelAttribute("task") TaskDTO task, BindingResult result, RedirectAttributes redirectAttributes, Model model){
 
-        // TODO Create another DTO with Java Record to complete the object before saving.
-        taskDTO.setAssignedDate(LocalDate.now());
-        taskDTO.setStatus(Status.OPEN);
-        taskDTO.setId(UUID.randomUUID().getMostSignificantBits());
+        if(result.hasErrors()){
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "task/create";
+        } else{
+            // TODO Create another DTO with Java Record to complete the object before saving.
+            task.setAssignedDate(LocalDate.now());
+            task.setStatus(Status.OPEN);
+            task.setId(UUID.randomUUID().getMostSignificantBits());
 
-        taskService.save(taskDTO);
+            taskService.save(task);
 
-        redirectAttributes.addFlashAttribute("createdTask", taskDTO.getId());
+            redirectAttributes.addFlashAttribute("createdTask", task.getId());
+        }
 
-        return "redirect:/task/create";
+        return "redirect:/task/all";
     }
-
-    @GetMapping("{taskID}/delete")
-    public String deleteTask(@PathVariable("taskID") Long taskID, RedirectAttributes redirectAttributes){
+    
+    // New
+    @PostMapping("{taskID}/delete")
+    public String newDeleteTask(@PathVariable("taskID") Long taskID, RedirectAttributes redirectAttributes){
 
         // TODO findByID should return Optional<T>.
         TaskDTO taskDTO = Optional.ofNullable(taskService.findById(taskID))
@@ -82,62 +92,74 @@ public class TaskController {
 
         redirectAttributes.addFlashAttribute("deletedTask", taskDTO.getId());
 
-        return "redirect:/task/create";
+        return "redirect:/task/all";
     }
-
+    
     @GetMapping("{taskID}/edit")
-    public String editTask(@PathVariable("taskID") Long taskID, Model model){
+    public String newEditTask(@PathVariable("taskID") Long taskID, Model model){
 
         // TODO findByID should return Optional<T>.
-        TaskDTO taskDTO = Optional.ofNullable(taskService.findById(taskID))
+        TaskDTO updatedTask = Optional.ofNullable(taskService.findById(taskID))
                 .orElseThrow(() -> new TaskNotFoundException(taskID.toString()));
 
-        model.addAttribute("task", taskDTO);
+        model.addAttribute("task", updatedTask);
 
         return "task/update";
     }
 
     @PostMapping("{taskID}/edit")
-    public String editTask(@ModelAttribute TaskDTO taskDTO, @PathVariable("taskID") Long taskID, RedirectAttributes redirectAttributes){
+    public String newEditTask(@Valid @ModelAttribute("task") TaskDTO task, BindingResult result, @PathVariable("taskID") Long taskID, RedirectAttributes redirectAttributes, Model model){
 
-        // TODO findByID should return Optional<T>.
-        TaskDTO task = Optional.ofNullable(taskService.findById(taskID))
-                .orElseThrow(() -> new TaskNotFoundException(taskID.toString()));
-
-        if(task.getId().equals(taskDTO.getId())){
-            taskService.update(taskDTO);
-            redirectAttributes.addFlashAttribute("updatedTask",task.getId());
-        } else {
-            redirectAttributes.addFlashAttribute("updateError", "Error Message");
+        if (result.hasErrors()) {
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            return "task/update";
         }
 
-        return "redirect:/task/create";
-    }
+        // TODO findByID should return Optional<T>.
+        TaskDTO updatedTask = Optional.ofNullable(taskService.findById(taskID))
+                .orElseThrow(() -> new TaskNotFoundException(taskID.toString()));
 
+        if(task.getId().equals(updatedTask.getId())){
+            taskService.update(task);
+            redirectAttributes.addFlashAttribute("updatedTask",updatedTask.getId());
+        }
+
+        return "redirect:/task/all";
+    }
+    
     @GetMapping("/employee/pending-tasks")
-    public String employeePendingTasks(Model model){
+    public String newEmployeePendingTasks(Model model){
         //TODO This should only get tasks of a particular logged in employee after Spring Security.
-        model.addAttribute("tasks", taskService.findAllTasksByStatusIsNot(Status.COMPLETED));
+        model.addAttribute("pendingTasks", taskService.findAllTasksByStatusIsNot(Status.COMPLETED));
         return "task/pending-tasks";
     }
-
-    @GetMapping("/employee/edit/{id}")
+    
+    @GetMapping("/employee/{id}/edit")
     public String employeeEditTask(@PathVariable("id") Long id, Model model) {
 
         model.addAttribute("task", taskService.findById(id));
-        model.addAttribute("unFinishedTasks", taskService.findAllTasksByStatusIsNot(Status.COMPLETED));
         model.addAttribute("statuses", Status.values());
 
         return "task/status-update";
 
     }
 
-    @PostMapping("/employee/update/{id}")
-    public String employeeUpdateTask(TaskDTO taskDTO) {
-        taskService.updateStatus(taskDTO);
+    @PostMapping("/employee/{id}/edit")
+    public String employeeUpdateTask(@Valid @ModelAttribute("task") TaskDTO task, BindingResult result, @PathVariable("id") Long id, RedirectAttributes redirectAttributes, Model model) {
+
+        if(result.hasErrors()){
+            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+            model.addAttribute("statuses", Status.values());
+            return "task/status-update";
+        }
+
+        // TODO Check ID etc.
+        taskService.updateStatus(task);
+        redirectAttributes.addFlashAttribute("updatedTask",task.getId());
+
         return "redirect:/task/employee/pending-tasks";
     }
-
+    
     @GetMapping("/employee/archive")
     public String employeeArchivedTasks(Model model) {
         model.addAttribute("completedTasks", taskService.findAllTasksByStatus(Status.COMPLETED));
