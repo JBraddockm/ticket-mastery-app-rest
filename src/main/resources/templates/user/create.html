@@ -58,11 +58,11 @@
         <div class="col-span-2">
             <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                 <span class="hidden bg-green-50 border-green-500 text-green-900 dark:border-green-400"></span>
-                <form data-th-action="@{/user/new-create}" method="post" data-th-object="${user}">
+                <form data-th-action="@{/user/create}" method="post" data-th-object="${user}">
                     <div class="grid grid-cols-6 gap-6">
                         <div class="col-span-6 sm:col-span-3">
                             <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> First Name </label>
-                            <input type="text" id="first-name" data-th-field="*{firstName}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('firstName')} ? '__${isValid}__' : _" class="shadow-sm border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <input type="text" id="first-name" data-th-field="*{firstName}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('firstName')} ? ${isValid} : _" class="shadow-sm border bg-gray-50 border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
                             <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('firstName')}">
                                 <span class="font-medium" data-th-each="error : ${#fields.errors('firstName')}" data-th-text="${error}"></span>
                             </div>
@@ -94,7 +94,7 @@
                             <input type="text" id="password" data-th-field="*{password}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('password')} ? ${isValid} : _" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="•••••••••">
                             <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('password')}">
                                 <th:block data-th-each="error : ${#fields.errors('password')}">
-                                    <span class="font-medium" data-th-each=" err: ${#strings.arraySplit(error, ',')}" data-th-text="${err}"></span>
+                                    <span class="font-medium" data-th-each=" err: ${error.split(',')}" data-th-text="${err}"></span>
                                 </th:block>
                             </div>
                         </div>

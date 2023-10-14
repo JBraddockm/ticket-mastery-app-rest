@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layouts/layout-content}" lang="en">
-<!--/*@thymesVar id="deletedUserName" type="java.lang.String"*/-->
-<!--/*@thymesVar id="updatedUserName" type="java.lang.String"*/-->
+<!--/*@thymesVar id="deletedUser" type="java.lang.String"*/-->
+<!--/*@thymesVar id="updatedUser" type="java.lang.String"*/-->
+<!--/*@thymesVar id="createdUser" type="java.lang.String"*/-->
 <head>
     <title>All Users</title>
 </head>
@@ -59,7 +60,7 @@
                     </div>
                 </div>
                 <div class="flex items-center ml-auto space-x-2 sm:space-x-3">
-                    <a  data-th-href="@{/user/new-create}" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                    <a  data-th-href="@{/user/create}" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         <svg data-th-replace="~{icon-plus}"></svg> Add user
                     </a>
                     <a href="#" class="inline-flex items-center justify-center w-1/2 px-3 py-2 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-gray-700">
@@ -109,10 +110,10 @@
                             <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white" data-th-text="*{phoneNumber}"> 07590959055</td>
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white" data-th-text="*{roleDTO.description}"></td>
                             <td class="p-4 space-x-2 whitespace-nowrap">
-                                <a data-th-href="@{/user/{username}/new-edit(username = *{userName})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                <a data-th-href="@{/user/{username}/edit(username = *{userName})}" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                     <svg data-th-replace="~{icon-edit}"></svg>
                                 </a>
-                                <button data-th-data-delete-endpoint="@{/user/{username}/new-delete(username = *{userName})}" type="button" data-modal-toggle="delete-user-modal" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
+                                <button data-th-data-delete-endpoint="@{/user/{username}/delete(username = *{userName})}" type="button" data-modal-toggle="delete-user-modal" class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
                                     <svg data-th-replace="~{icon-delete}"></svg>
                                 </button>
                             </td>
@@ -179,8 +180,9 @@
         </div>
     </div>
     <!--/*-->Toast Notifications<!--*/-->
-    <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedUserName}, message = |${deletedUserName} has been deleted| )}">User has been deleted</div>
-    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedUserName}, message = |${updatedUserName} has been updated| )}">User has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedUser}, message = |${deletedUser} has been deleted| )}">User has been deleted</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedUser}, message = |${updatedUser} has been updated| )}">User has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${createdUser}, message = |${createdUser} has been created| )}">User has been created</div>
 
 </div>
 </body>

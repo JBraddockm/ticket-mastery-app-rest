@@ -43,23 +43,23 @@ public class UserController {
     @GetMapping("/all")
     public String viewAllUsers(Model model) {
         model.addAttribute("users", userService.findAll());
-        return "user/new-list";
+        return "user/list";
     }
 
-    @GetMapping("/new-create")
+    @GetMapping("/create")
     public String newCreateUser(UserDTO user, Model model) {
 
         model.addAttribute("user", user);
 
-        return "user/new-create";
+        return "user/create";
     }
 
-    @PostMapping("/new-create")
+    @PostMapping("/create")
     public String newCreateUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
 
         if (result.hasErrors()) {
             model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-            return "user/new-create";
+            return "user/create";
         } else {
             userService.save(user);
             redirectAttributes.addFlashAttribute("createdUser",user.getUserName());
@@ -68,7 +68,7 @@ public class UserController {
         return "redirect:/user/all";
     }
 
-    @PostMapping("{username}/new-delete")
+    @PostMapping("{username}/delete")
     public String newDeleteUser(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
 
         // TODO findByID should return Optional<T>.
@@ -77,12 +77,12 @@ public class UserController {
 
         userService.deleteById(username);
 
-        redirectAttributes.addFlashAttribute("deletedUserName", user.getUserName());
+        redirectAttributes.addFlashAttribute("deletedUser", user.getUserName());
 
         return "redirect:/user/all";
     }
 
-    @GetMapping("{username}/new-edit")
+    @GetMapping("{username}/edit")
     public String newEditUser(@PathVariable("username") String username, Model model) {
         // TODO findByID should return Optional<T>.
         UserDTO user = Optional.ofNullable(userService.findById(username))
@@ -90,24 +90,23 @@ public class UserController {
 
         model.addAttribute("user", user);
 
-        return "user/new-update";
+        return "user/update";
     }
 
-    @PostMapping("{username}/new-edit")
+    @PostMapping("{username}/edit")
     public String newEditUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, @PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
 
         if (result.hasErrors()) {
             model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-            return "user/new-update";
+            return "user/update";
         }
 
         UserDTO updatedUser = Optional.ofNullable(userService.findById(username))
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-
         if (user.getUserName().equals(updatedUser.getUserName())) {
             userService.update(updatedUser);
-            redirectAttributes.addFlashAttribute("updatedUserName", updatedUser.getUserName());
+            redirectAttributes.addFlashAttribute("updatedUser", updatedUser.getUserName());
         } else {
             redirectAttributes.addFlashAttribute("updateError", "Error Message");
         }
