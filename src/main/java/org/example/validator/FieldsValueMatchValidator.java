@@ -33,8 +33,7 @@ public class FieldsValueMatchValidator implements ConstraintValidator<FieldsValu
             context.buildConstraintViolationWithTemplate(this.message) // setting the custom message
                     .addPropertyNode(this.fieldMatch) // setting property path
                     .addConstraintViolation() // creating the new constraint violation
-                    .disableDefaultConstraintViolation() // disabling the default constraint violation
-            ;
+                    .disableDefaultConstraintViolation(); // disabling the default constraint violation
         }
 
         return valid;
