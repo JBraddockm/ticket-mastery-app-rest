@@ -1,5 +1,7 @@
 package org.example.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,11 +14,29 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 public class TaskDTO {
+
     private Long id;
+
+    @NotNull(
+            message = "Choose a project"
+    )
     private ProjectDTO project;
+
+    @NotNull(
+            message = "Choose an employee"
+    )
     private UserDTO assignedEmployee;
+
+    @NotBlank(
+            message = "Enter a task title"
+    )
     private String taskSubject;
+
+    @NotBlank(
+            message = "Add task details"
+    )
     private String taskDetail;
+
     private Status status;
     private LocalDate assignedDate;
 
