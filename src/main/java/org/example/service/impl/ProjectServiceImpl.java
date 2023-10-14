@@ -52,13 +52,13 @@ public class ProjectServiceImpl extends AbstractMapService<ProjectDTO, String> i
     @Override
     public void complete(ProjectDTO projectDTO) {
         //TODO Remove findByID check from here or Controller.
-        super.findById(projectDTO.getProjectCode()).setProjetStatus(Status.COMPLETED);
+        super.findById(projectDTO.getProjectCode()).setProjectStatus(Status.COMPLETED);
     }
 
     @Override
     public List<ProjectDTO> findAllNonCompletedProjects() {
         return super.findAll().stream()
-                .filter(projectDTO -> !projectDTO.getProjetStatus().equals(Status.COMPLETED))
+                .filter(projectDTO -> !projectDTO.getProjectStatus().equals(Status.COMPLETED))
                 .toList();
     }
 
