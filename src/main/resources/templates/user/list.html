@@ -181,7 +181,7 @@
     </div>
     <!--/*-->Toast Notifications<!--*/-->
     <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedUser}, message = |${deletedUser} has been deleted| )}">User has been deleted</div>
-    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedUser}, message = |${updatedUser} has been updated| )}">User has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: warning(object = ${updatedUser}, message = |${updatedUser} has been updated| )}">User has been updated</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${createdUser}, message = |${createdUser} has been created| )}">User has been created</div>
 
 </div>

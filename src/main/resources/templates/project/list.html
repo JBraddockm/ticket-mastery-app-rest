@@ -165,7 +165,7 @@
 
     <!--/*-->Toast Notifications<!--*/-->
     <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedProject}, message = |${deletedProject} has been deleted| )}">Project has been deleted</div>
-    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedProject}, message = |${updatedProject} has been updated| )}">Project has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: warning(object = ${updatedProject}, message = |${updatedProject} has been updated| )}">Project has been updated</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${createdProject}, message = |${createdProject} has been created| )}">Project has been created</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${completedProject}, message = |${completedProject} has been completed| )}">Project has been completed</div>
 

@@ -165,7 +165,7 @@
 
     <!--/*-->Toast Notifications<!--*/-->
     <div data-th-replace="~{fragments/components/toast-notification :: danger(object = ${deletedTask}, message = |${deletedTask} has been deleted| )}">Task has been deleted</div>
-    <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${updatedTask}, message = |${updatedTask} has been updated| )}">Task has been updated</div>
+    <div data-th-replace="~{fragments/components/toast-notification :: warning(object = ${updatedTask}, message = |${updatedTask} has been updated| )}">Task has been updated</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${createdTask}, message = |${createdTask} has been created| )}">Task has been created</div>
     <div data-th-replace="~{fragments/components/toast-notification :: success(object = ${completedTask}, message = |${completedTask} has been completed| )}">Task has been completed</div>
 
