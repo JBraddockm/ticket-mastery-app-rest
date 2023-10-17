@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
+import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTrigger;
 import jakarta.validation.Valid;
 import org.example.dto.ProjectDTO;
 import org.example.dto.TaskDTO;
@@ -9,6 +11,7 @@ import org.example.exception.TaskNotFoundException;
 import org.example.service.ProjectService;
 import org.example.service.TaskService;
 import org.example.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -164,5 +167,20 @@ public class TaskController {
     public String employeeArchivedTasks(Model model) {
         model.addAttribute("completedTasks", taskService.findAllTasksByStatus(Status.COMPLETED));
         return "task/archive";
+    }
+
+    // task/employee/id/status
+    @PostMapping("/employee/{id}/status")
+    public String updateTaskStatus(@PathVariable("id") Long id, @RequestParam String status, Model model){
+        // Change the status.
+        taskService.findById(id).setStatus(Status.valueOf(status));
+
+        // Add the user selected status to the partial.
+        model.addAttribute("status_selected", status);
+
+        // Add all statuses to the partial.
+        model.addAttribute("statuses", Status.values());
+
+        return "fragments/partials/status-response :: status";
     }
 }

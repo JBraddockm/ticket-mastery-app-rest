@@ -1,0 +1,1 @@
+ <option data-th-fragment="status" data-th-each="status : ${statuses}" data-th-value="${status.name()}" data-th-text="${status}" data-th-selected="${#strings.equalsIgnoreCase(status_selected, status.name()) ? status_selected : _}"></option>
