@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/user")
@@ -71,11 +70,9 @@ public class UserController {
     @PostMapping("{username}/delete")
     public String newDeleteUser(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
 
-        // TODO findByID should return Optional<T>.
-        UserDTO user = Optional.ofNullable(userService.findById(username))
-                .orElseThrow(() -> new UserNotFoundException(username));
+        UserDTO user = userService.findByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 
-        userService.deleteById(username);
+        userService.deleteByUserName(username);
 
         redirectAttributes.addFlashAttribute("deletedUser", user.getUserName());
 
@@ -84,9 +81,8 @@ public class UserController {
 
     @GetMapping("{username}/edit")
     public String newEditUser(@PathVariable("username") String username, Model model) {
-        // TODO findByID should return Optional<T>.
-        UserDTO user = Optional.ofNullable(userService.findById(username))
-                .orElseThrow(() -> new UserNotFoundException(username));
+
+        UserDTO user = userService.findByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
 
         model.addAttribute("user", user);
 
@@ -101,12 +97,9 @@ public class UserController {
             return "user/update";
         }
 
-        UserDTO updatedUser = Optional.ofNullable(userService.findById(username))
-                .orElseThrow(() -> new UserNotFoundException(username));
-
-        if (user.getUserName().equals(updatedUser.getUserName())) {
-            userService.update(updatedUser);
-            redirectAttributes.addFlashAttribute("updatedUser", updatedUser.getUserName());
+        if (user.getUserName().equals(username)) {
+            userService.update(user);
+            redirectAttributes.addFlashAttribute("updatedUser", user.getUserName());
         } else {
             redirectAttributes.addFlashAttribute("updateError", "Error Message");
         }
