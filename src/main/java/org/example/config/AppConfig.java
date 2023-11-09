@@ -1,6 +1,7 @@
 package org.example.config;
 
 import net.datafaker.Faker;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
@@ -10,6 +11,12 @@ import java.util.Locale;
 
 @Configuration
 public class AppConfig {
+
+    @Bean
+    public ModelMapper mapper(){
+        return new ModelMapper();
+    }
+
     @Bean
     Faker faker() {
         return new Faker(new Locale("en", "GB"));
