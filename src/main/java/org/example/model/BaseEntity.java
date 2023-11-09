@@ -12,19 +12,21 @@ import java.time.Instant;
 @NoArgsConstructor
 @Data
 public class BaseEntity {
-    @SequenceGenerator(
-            name = "entity_id_seq",
-            sequenceName = "entity_id_seq",
-            allocationSize = 1
-    )
+//    @SequenceGenerator(
+//            name = "entity_id_seq",
+//            sequenceName = "entity_id_seq",
+//            allocationSize = 1
+//    )
+//    @Id
+//    @GeneratedValue(
+//            strategy = GenerationType.SEQUENCE,
+//            generator = "entity_id_seq"
+//    )
+//    @Column(
+//            columnDefinition = "SERIAL"
+//    )
     @Id
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "entity_id_seq"
-    )
-    @Column(
-            columnDefinition = "SERIAL"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long insertUserId;
