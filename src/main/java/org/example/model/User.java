@@ -22,6 +22,11 @@ public class User extends BaseEntity{
     @ManyToOne(
             fetch = FetchType.LAZY
     )
+    @JoinColumn(
+            foreignKey = @ForeignKey(
+                    name = "users_role_id_fk"
+            )
+    )
     private Role role;
 
     @Enumerated(EnumType.STRING)
