@@ -18,11 +18,6 @@ public class AppConfig {
     }
 
     @Bean
-    Faker faker() {
-        return new Faker(new Locale("en", "GB"));
-    }
-
-    @Bean
     public ITemplateResolver svgTemplateResolver() {
         SpringResourceTemplateResolver resolver = new SpringResourceTemplateResolver();
         resolver.setPrefix("classpath:/static/svg/");
