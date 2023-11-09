@@ -97,15 +97,15 @@
 
                         <div class="col-span-6 sm:col-span-3">
                             <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role</label>
-                            <select id="countries" data-th-field="${user.roleDTO}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('roleDTO')} ? ${isValid} : _" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <select id="countries" data-th-field="${user.role}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('role')} ? ${isValid} : _" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">Select a Role</option>
                                 <option data-th-each="role : ${roles}"
                                         data-th-value="${role.id}"
                                         data-th-text="${role.description}">
                                 </option>
                             </select>
-                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('roleDTO')}">
-                                <span class="font-medium" data-th-each="error : ${#fields.errors('roleDTO')}" data-th-text="${error}"></span>
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('role')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('role')}" data-th-text="${error}"></span>
                             </div>
                         </div>
 

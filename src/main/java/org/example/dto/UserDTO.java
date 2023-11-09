@@ -68,7 +68,7 @@ public class UserDTO {
     @NotNull(
             message = "Choose a role"
     )
-    private RoleDTO roleDTO;
+    private RoleDTO role;
 
     @NotNull(
             message = "Choose a gender"
