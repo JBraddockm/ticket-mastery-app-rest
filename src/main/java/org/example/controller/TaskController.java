@@ -1,7 +1,5 @@
 package org.example.controller;
 
-import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
-import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxTrigger;
 import jakarta.validation.Valid;
 import org.example.dto.ProjectDTO;
 import org.example.dto.TaskDTO;
@@ -11,7 +9,6 @@ import org.example.exception.TaskNotFoundException;
 import org.example.service.ProjectService;
 import org.example.service.TaskService;
 import org.example.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Controller
+//@Controller
 @RequestMapping("/task")
 public class TaskController {
 

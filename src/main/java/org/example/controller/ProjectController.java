@@ -7,7 +7,6 @@ import org.example.enums.Status;
 import org.example.exception.ProjectNotFoundException;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +15,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 
-@Controller
+//@Controller
 @RequestMapping("/project")
 public class ProjectController {
 
@@ -147,7 +146,7 @@ public class ProjectController {
     public String newGetProjectByManager(Model model) {
 
         // TODO Log in will determine the manager after implementing Spring Security.
-        UserDTO manager = userService.findById("johnkelly@example.com");
+        UserDTO manager = userService.findByUserName("johnkelly@example.com").orElseThrow();
 
         model.addAttribute("projects", projectService.getCountedListOfProjectDTO(manager));
 
