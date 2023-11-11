@@ -11,8 +11,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class BaseEntity {
-//    @SequenceGenerator(
+public abstract class BaseEntity {
+    //    @SequenceGenerator(
 //            name = "entity_id_seq",
 //            sequenceName = "entity_id_seq",
 //            allocationSize = 1
@@ -27,18 +27,47 @@ public class BaseEntity {
 //    )
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(
+            nullable = false,
+            updatable = false)
     private Long id;
 
-    private Long insertUserId;
-    private Long lastUpdateUserId;
-
     @Column(
+            name = "created_on",
+            updatable = false,
+            nullable = false,
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
-    private Instant insertDateTime;
+    private Instant createdOn;
 
     @Column(
+            name = "created_by",
+            updatable = false,
+            nullable = false
+    )
+    private Long createdBy;
+
+    @Column(
+            name = "updated_by"
+    )
+
+    private Long updatedBy;
+
+    @Column(
+            name = "updated_on",
             columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
-    private Instant lastUpdateDateTime;
+    private Instant updatedOn;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdBy = 1L;
+        this.createdOn = Instant.now();
+    }
+
+    @PreUpdate
+    private void preUpdate() {
+        this.updatedOn = Instant.now();
+        this.updatedBy = 1L;
+    }
 }
