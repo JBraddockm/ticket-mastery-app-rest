@@ -11,7 +11,6 @@ import org.example.enums.Gender;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-
 @FieldsValueMatch.List({
         @FieldsValueMatch(
                 field = "password",
@@ -20,6 +19,8 @@ import org.example.enums.Gender;
         )
 })
 public class UserDTO {
+
+    private Long id;
 
     @NotBlank(
             message = "First name cannot be empty"
@@ -45,9 +46,8 @@ public class UserDTO {
             flags = Pattern.Flag.CASE_INSENSITIVE,
             message = "Enter a valid email address"
     )
-    private String userName;
-    //
-//    @NotBlank
+    private String username;
+
     @ValidPassword
     private String password;
 
