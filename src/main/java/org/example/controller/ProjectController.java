@@ -7,15 +7,15 @@ import org.example.enums.Status;
 import org.example.exception.ProjectNotFoundException;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Optional;
 
-//@Controller
+@Controller
 @RequestMapping("/project")
 public class ProjectController {
 
@@ -46,7 +46,6 @@ public class ProjectController {
     @GetMapping("/create")
     public String newCreateProject(Model model, ProjectDTO project) {
 
-        project.setProjectStatus(Status.OPEN);
         model.addAttribute("project", project);
 
         return "project/create";
@@ -69,12 +68,11 @@ public class ProjectController {
     @PostMapping("{projectCode}/delete")
     public String newDeleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes){
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO deletedProject = Optional.ofNullable(projectService.findById(projectCode))
+        ProjectDTO deletedProject = projectService.findByProjectCode(projectCode)
                 .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
         if (deletedProject.getProjectCode().equals(projectCode)) {
-            projectService.deleteById(projectCode);
+            projectService.deleteByProjectCode(projectCode);
             redirectAttributes.addFlashAttribute("deletedProject", deletedProject.getProjectCode());
         }
 
@@ -84,8 +82,7 @@ public class ProjectController {
     @GetMapping("{projectCode}/edit")
     public String newUpdateProject(@PathVariable("projectCode") String projectCode, Model model) {
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO project = Optional.ofNullable(projectService.findById(projectCode))
+        ProjectDTO project = projectService.findByProjectCode(projectCode)
                 .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
         model.addAttribute("project", project);
@@ -101,11 +98,10 @@ public class ProjectController {
             return "project/update";
         }
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO updatedProject = Optional.ofNullable(projectService.findById(projectCode))
+        ProjectDTO updatedProject = projectService.findByProjectCode(projectCode)
                 .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
-        if (updatedProject.getProjectCode().equals(project.getProjectCode())) {
+        if (updatedProject.getProjectCode().equals(projectCode)) {
             projectService.update(project);
             redirectAttributes.addFlashAttribute("updatedProject", project.getProjectCode());
         }
@@ -116,8 +112,7 @@ public class ProjectController {
     @PostMapping("{projectCode}/complete")
     public String newCompleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes){
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO completedProject = Optional.ofNullable(projectService.findById(projectCode))
+        ProjectDTO completedProject = projectService.findByProjectCode(projectCode)
                 .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
         if (completedProject.getProjectCode().equals(projectCode)) {
@@ -132,8 +127,7 @@ public class ProjectController {
     @PostMapping("/manager/{projectCode}/complete")
     public String newManagerCompleteProject(@PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes) {
 
-        // TODO findByID should return Optional<T>.
-        ProjectDTO completedProject = Optional.ofNullable(projectService.findById(projectCode))
+        ProjectDTO completedProject = projectService.findByProjectCode(projectCode)
                 .orElseThrow(() -> new ProjectNotFoundException(projectCode));
 
         projectService.complete(completedProject);
@@ -146,11 +140,10 @@ public class ProjectController {
     public String newGetProjectByManager(Model model) {
 
         // TODO Log in will determine the manager after implementing Spring Security.
-        UserDTO manager = userService.findByUserName("johnkelly@example.com").orElseThrow();
+        UserDTO manager = userService.findByUsername("johnkelly@example.com").orElseThrow();
 
         model.addAttribute("projects", projectService.getCountedListOfProjectDTO(manager));
 
         return "manager/project-status";
     }
-
 }
