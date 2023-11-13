@@ -17,12 +17,10 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final RoleRepository roleRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -40,21 +38,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> findByUserName(String userName) {
-        return userRepository.findByUserName(userName)
+    public Optional<UserDTO> findByUsername(String userName) {
+        return userRepository.findByUsername(userName)
                 .map(userMapper::convertToDTO);
     }
 
     @Override
-    public void deleteByUserName(String userName) {
-        userRepository.deleteByUserName(userName);
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
     }
 
     @Override
     public UserDTO update(UserDTO userDTO) {
 
         // Find the user
-        User user = userRepository.findByUserName(userDTO.getUserName()).orElseThrow(() -> new UserNotFoundException(userDTO.getUserName()));
+        User user = userRepository.findByUsername(userDTO.getUsername()).orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
 
         // Convert DTO to User
         User updatedUser = userMapper.convertToEntity(userDTO);
@@ -66,7 +64,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(updatedUser);
 
         // Return the updated user
-        return this.findByUserName(updatedUser.getUserName()).orElseThrow();
+        return this.findByUsername(updatedUser.getUsername()).orElseThrow();
     }
 
     @Override

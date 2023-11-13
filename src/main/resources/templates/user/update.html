@@ -31,7 +31,7 @@
         <div class="col-span-2">
             <div class="p-4 mb-4 bg-white border border-gray-200 rounded-lg shadow-sm 2xl:col-span-2 dark:border-gray-700 sm:p-6 dark:bg-gray-800">
                 <span class="hidden bg-green-50 border-green-500 text-green-900 dark:border-green-400"></span>
-                <form data-th-action="@{/user/{username}/edit(username = *{userName})}" method="post" data-th-object="${user}">
+                <form data-th-action="@{/user/{username}/edit(username = *{getUsername})}" method="post" data-th-object="${user}">
                     <div class="grid grid-cols-6 gap-6">
                         <div class="col-span-6 sm:col-span-3">
                             <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> First Name </label>
@@ -49,9 +49,9 @@
                         </div>
                         <div class="col-span-6 sm:col-span-3">
                             <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Email </label>
-                            <input type="email" id="email" data-th-field="*{userName}" data-th-value="*{userName}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('userName')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
-                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('userName')}">
-                                <span class="font-medium" data-th-each="error : ${#fields.errors('userName')}" data-th-text="${error}"></span>
+                            <input type="email" id="email" data-th-field="*{username}" data-th-value="*{username}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('username')} ? ${isValid} : _" class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                            <div class="mt-2 text-sm text-red-600 dark:text-red-500 flex flex-col" data-th-if="${#fields.hasErrors('username')}">
+                                <span class="font-medium" data-th-each="error : ${#fields.errors('username')}" data-th-text="${error}"></span>
                             </div>
                         </div>
                         <div class="col-span-6 sm:col-span-3">

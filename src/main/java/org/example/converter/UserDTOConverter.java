@@ -18,7 +18,10 @@ public class UserDTOConverter implements Converter<String, UserDTO> {
     }
 
     @Override
-    public UserDTO convert(@Nonnull String userName) {
-        return userService.findByUserName(userName).orElseThrow();
+    public UserDTO convert(@Nonnull String username) {
+        if (username.isEmpty()) {
+            return null;
+        }
+        return userService.findByUsername(username).orElseThrow();
     }
 }

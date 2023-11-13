@@ -9,12 +9,21 @@ import org.example.enums.Gender;
 @Data
 @Entity
 @Table(
-        name = "users"
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "user_username_unique",
+                        columnNames = "username"
+                )
+        }
 )
 public class User extends BaseEntity{
     private String firstName;
     private String lastName;
-    private String userName;
+    @Column(
+            name = "username"
+    )
+    private String username;
     private String password;
     private String confirmPassword;
     private String phoneNumber;

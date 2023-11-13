@@ -53,7 +53,7 @@
                             <label for="managers" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Assigned Manager</label>
                             <select id="managers" data-th-field="${project.projectManager}" data-th-errorclass="${'bg-red-50 border-red-500 text-red-900 dark:border-red-400'}" data-th-classappend="${not #fields.hasErrors('projectManager')} ? ${isValid} : _" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option data-th-each="manager : ${managers}"
-                                        data-th-value="${manager.userName}"
+                                        data-th-value="${manager.getUsername}"
                                         data-th-text="|${manager.firstName} ${manager.lastName}|">
                                 </option>
                             </select>

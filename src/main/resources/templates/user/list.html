@@ -78,7 +78,7 @@
                                 </div>
                             </td>
                             <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                                data-th-text="*{userName}"> info@example.com
+                                data-th-text="*{getUsername()}"> info@example.com
                             </td>
                             <td class="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                 data-th-text="*{gender}"> Female
@@ -89,13 +89,13 @@
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white"
                                 data-th-text="*{role.description}"></td>
                             <td class="p-4 space-x-2 whitespace-nowrap">
-                                <a data-th-href="@{/user/{username}/edit(username = *{userName})}"
+                                <a data-th-href="@{/user/{username}/edit(username = *{getUsername})}"
                                    class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                     <svg data-th-replace="~{icon-edit}"></svg>
                                 </a>
                                 <button title="Delete" type="button"
-                                        data-th-data-post-endpoint="@{/user/{username}/delete(username = *{userName})}"
-                                        data-th-data-process="${user.userName}" data-th-data-modal-type="'delete'"
+                                        data-th-data-post-endpoint="@{/user/{username}/delete(username = *{getUsername})}"
+                                        data-th-data-process="${user.getUsername}" data-th-data-modal-type="'delete'"
                                         data-modal-toggle="modal-action"
                                         class="btnModal inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900">
                                     <svg data-th-replace="~{icon-delete}"></svg>
