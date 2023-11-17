@@ -52,8 +52,8 @@
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white" data-th-text="${#temporals.format(task.assignedDate, 'dd/MM/YYYY')}"></td>
                             <td class="p-4 text-base font-normal text-gray-900 whitespace-nowrap dark:text-white">
                                 <div class="flex items-center">
-                                    <div class="h-2.5 w-2.5 rounded-full mr-2" data-th-classappend="${task.project.projectStatus.equals(task.project.projectStatus.OPEN)} ? ${'bg-yellow-500'}  : (${task.project.projectStatus.equals(task.project.projectStatus.IN_PROGRESS)} ? ${'bg-orange-500'} : ${'bg-purple-500'})"></div>
-                                    [[${task.project.projectStatus}]]
+                                    <div class="h-2.5 w-2.5 rounded-full mr-2" data-th-classappend="${task.status.equals(task.status.OPEN)} ? ${'bg-yellow-500'}  : (${task.status.equals(task.status.IN_PROGRESS)} ? ${'bg-orange-500'} : ${'bg-purple-500'})"></div>
+                                    [[${task.status}]]
                                 </div>
                             </td>
                             <td class="p-4 space-x-2 whitespace-nowrap">
