@@ -19,10 +19,9 @@ VALUES (current_timestamp, 1, null, null, true, 3, 'James', 'Brook', 'jamesbrook
 
 
 INSERT INTO projects (project_end_date, project_start_date, created_by, created_on, manager_id, updated_by,
-                      updated_on, project_code, project_detail, project_name, project_status, complete_task_counts,
-                      unfinished_task_counts)
+                      updated_on, project_code, project_detail, project_name, project_status)
 VALUES ('2023-11-30', '2023-11-10', 1, current_timestamp, 2, null, null, 'PR001', 'Introduction to Thymeleaf',
-        'Spring MVC - Thymeleaf', 'OPEN', 0, 1);
+        'Spring MVC - Thymeleaf', 'OPEN');
 
 INSERT INTO tasks (assigned_date, assigned_employee_id, created_by, created_on, project_id, updated_by, updated_on,
                    status, task_detail, task_subject)
