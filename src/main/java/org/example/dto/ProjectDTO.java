@@ -20,6 +20,9 @@ import java.time.LocalDate;
         message = "Choose a valid due date"
 )
 public class ProjectDTO {
+
+    Long id;
+
     @NotBlank(
             message = "Add project name"
     )
