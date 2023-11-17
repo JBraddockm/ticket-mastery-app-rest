@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.example.enums.Status;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(
@@ -40,6 +42,12 @@ public class Project extends BaseEntity{
             )
     )
     private User projectManager;
+
+    @OneToMany(
+            orphanRemoval = true,
+            mappedBy = "project"
+    )
+    private Set<Task> tasks = new HashSet<>();
 
     private LocalDate projectStartDate;
 
