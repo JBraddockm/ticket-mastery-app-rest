@@ -1,19 +1,29 @@
 package org.example.service;
 
+import java.util.*;
 import org.example.dto.TaskDTO;
 import org.example.dto.UserDTO;
 import org.example.enums.Status;
 
-import java.util.*;
+public interface TaskService {
 
-public interface TaskService extends CrudService<TaskDTO, Long>{
-    List<TaskDTO> findTasksByManager(UserDTO manager);
+  TaskDTO save(TaskDTO taskDTO);
 
-    List<TaskDTO> findAllTasksByStatus(Status status);
+  void update(TaskDTO taskDTO);
 
-    List<TaskDTO> findAllTasksByStatusIsNot(Status status);
+  Optional<TaskDTO> findById(Long id);
 
-    Map<Boolean, List<TaskDTO>> partitionTasksByStatusAndByManager(UserDTO manager);
+  void deleteById(Long id);
 
-    void updateStatus(TaskDTO task);
+  List<TaskDTO> findAll();
+
+  List<TaskDTO> findTasksByManager(UserDTO manager);
+
+  List<TaskDTO> findAllTasksByStatus(Status status);
+
+  List<TaskDTO> findAllTasksByStatusIsNot(Status status);
+
+  Map<Boolean, List<TaskDTO>> partitionTasksByStatusAndByManager(UserDTO manager);
+
+  void updateStatus(TaskDTO task);
 }
