@@ -2,8 +2,8 @@ package org.example.service;
 
 import java.util.*;
 import org.example.dto.TaskDTO;
-import org.example.dto.UserDTO;
 import org.example.enums.Status;
+import org.example.model.Task;
 
 public interface TaskService {
 
@@ -17,13 +17,13 @@ public interface TaskService {
 
   List<TaskDTO> findAll();
 
-  List<TaskDTO> findTasksByManager(UserDTO manager);
-
   List<TaskDTO> findAllTasksByStatus(Status status);
 
   List<TaskDTO> findAllTasksByStatusIsNot(Status status);
 
-  Map<Boolean, List<TaskDTO>> partitionTasksByStatusAndByManager(UserDTO manager);
-
   void updateStatus(TaskDTO task);
+
+  TaskDTO mapToDTO(Task task);
+
+  Task mapToEntity(TaskDTO taskDTO);
 }
