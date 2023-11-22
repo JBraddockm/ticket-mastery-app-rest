@@ -70,7 +70,6 @@ public class TaskController {
           "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
       return "task/create";
     } else {
-      // TODO Create another DTO with Java Record to complete the object before saving.
       task.setAssignedDate(LocalDate.now());
       task.setStatus(Status.OPEN);
 
@@ -125,6 +124,7 @@ public class TaskController {
           "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
       return "task/update";
     }
+
     TaskDTO updatedTask =
         taskService
             .findById(taskID)
@@ -172,9 +172,15 @@ public class TaskController {
       return "task/status-update";
     }
 
-    // TODO Check ID etc.
-    taskService.updateStatus(task);
-    redirectAttributes.addFlashAttribute("updatedTask", task.getId());
+    TaskDTO updatedTask =
+            taskService
+                    .findById(id)
+                    .orElseThrow(() -> new TaskNotFoundException(id.toString()));
+
+    if (task.getId().equals(id)) {
+      taskService.updateStatus(task);
+      redirectAttributes.addFlashAttribute("updatedTask", updatedTask.getId());
+    }
 
     return "redirect:/task/employee/pending-tasks";
   }
