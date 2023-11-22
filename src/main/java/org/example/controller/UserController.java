@@ -20,92 +20,107 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
-    private final RoleService roleService;
+  private final UserService userService;
+  private final RoleService roleService;
 
-    public UserController(UserService userService, RoleService roleService) {
-        this.userService = userService;
-        this.roleService = roleService;
+  public UserController(UserService userService, RoleService roleService) {
+    this.userService = userService;
+    this.roleService = roleService;
+  }
+
+  @ModelAttribute("genders")
+  public List<Gender> getGenders() {
+    return Arrays.stream(Gender.values()).toList();
+  }
+
+  @ModelAttribute("roles")
+  public List<RoleDTO> getRoles() {
+    return roleService.findAll();
+  }
+
+  // New
+  @GetMapping("/all")
+  public String viewAllUsers(Model model) {
+    model.addAttribute("users", userService.findAll());
+    return "user/list";
+  }
+
+  @GetMapping("/create")
+  public String newCreateUser(UserDTO user, Model model) {
+
+    model.addAttribute("user", user);
+
+    return "user/create";
+  }
+
+  @PostMapping("/create")
+  public String newCreateUser(
+      @Valid @ModelAttribute("user") UserDTO user,
+      BindingResult result,
+      RedirectAttributes redirectAttributes,
+      Model model) {
+
+    if (result.hasErrors()) {
+      model.addAttribute(
+          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+      return "user/create";
+    } else {
+      userService.save(user);
+      redirectAttributes.addFlashAttribute("createdUser", user.getUsername());
     }
 
-    @ModelAttribute("genders")
-    public List<Gender> getGenders() {
-        return Arrays.stream(Gender.values()).toList();
+    return "redirect:/user/all";
+  }
+
+  @PostMapping("{username}/delete")
+  public String newDeleteUser(
+      @PathVariable("username") String username, RedirectAttributes redirectAttributes) {
+
+    UserDTO user =
+        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+    userService.deleteByUsername(username);
+
+    redirectAttributes.addFlashAttribute("deletedUser", user.getUsername());
+
+    return "redirect:/user/all";
+  }
+
+  @GetMapping("{username}/edit")
+  public String newEditUser(@PathVariable("username") String username, Model model) {
+
+    UserDTO user =
+        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+    model.addAttribute("user", user);
+
+    return "user/update";
+  }
+
+  @PostMapping("{username}/edit")
+  public String newEditUser(
+      @Valid @ModelAttribute("user") UserDTO user,
+      BindingResult result,
+      @PathVariable("username") String username,
+      Model model,
+      RedirectAttributes redirectAttributes) {
+
+    if (result.hasErrors()) {
+      model.addAttribute(
+          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
+      return "user/update";
     }
 
-    @ModelAttribute("roles")
-    public List<RoleDTO> getRoles() {
-        return roleService.findAll();
+    UserDTO updatedUser =
+        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+
+    if (updatedUser.getUsername().equals(user.getUsername())) {
+      userService.update(user);
+      redirectAttributes.addFlashAttribute("updatedUser", user.getUsername());
+    } else {
+      redirectAttributes.addFlashAttribute("updateError", "Error Message");
     }
 
-    // New
-    @GetMapping("/all")
-    public String viewAllUsers(Model model) {
-        model.addAttribute("users", userService.findAll());
-        return "user/list";
-    }
-
-    @GetMapping("/create")
-    public String newCreateUser(UserDTO user, Model model) {
-
-        model.addAttribute("user", user);
-
-        return "user/create";
-    }
-
-    @PostMapping("/create")
-    public String newCreateUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, RedirectAttributes redirectAttributes, Model model) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-            return "user/create";
-        } else {
-            userService.save(user);
-            redirectAttributes.addFlashAttribute("createdUser",user.getUsername());
-        }
-
-        return "redirect:/user/all";
-    }
-
-    @PostMapping("{username}/delete")
-    public String newDeleteUser(@PathVariable("username") String username, RedirectAttributes redirectAttributes) {
-
-        UserDTO user = userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-        userService.deleteByUsername(username);
-
-        redirectAttributes.addFlashAttribute("deletedUser", user.getUsername());
-
-        return "redirect:/user/all";
-    }
-
-    @GetMapping("{username}/edit")
-    public String newEditUser(@PathVariable("username") String username, Model model) {
-
-        UserDTO user = userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-        model.addAttribute("user", user);
-
-        return "user/update";
-    }
-
-    @PostMapping("{username}/edit")
-    public String newEditUser(@Valid @ModelAttribute("user") UserDTO user, BindingResult result, @PathVariable("username") String username, Model model, RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-            return "user/update";
-        }
-
-        UserDTO updatedUser = userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-        if (updatedUser.getUsername().equals(username)) {
-            userService.update(user);
-            redirectAttributes.addFlashAttribute("updatedUser", user.getUsername());
-        } else {
-            redirectAttributes.addFlashAttribute("updateError", "Error Message");
-        }
-
-        return "redirect:/user/all";
-    }
+    return "redirect:/user/all";
+  }
 }
