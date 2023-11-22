@@ -1,9 +1,9 @@
 package org.example.service;
 
-import org.example.dto.UserDTO;
-
 import java.util.List;
 import java.util.Optional;
+import org.example.dto.UserDTO;
+import org.example.model.User;
 
 public interface UserService {
     // TODO Create a findAllByRole method to replace the following two.
@@ -13,5 +13,7 @@ public interface UserService {
     Optional<UserDTO> findByUsername(String username);
     UserDTO save(UserDTO userDTO);
     UserDTO update(UserDTO dto);
-    void deleteByUsername(String userName);
+    void deleteByUsername(String username);
+    UserDTO mapToDTO(User user);
+    User mapToEntity(UserDTO userDTO);
 }
