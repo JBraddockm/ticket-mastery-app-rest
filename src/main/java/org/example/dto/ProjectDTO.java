@@ -2,14 +2,16 @@ package org.example.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.annotation.ValidDueDate;
 import org.example.enums.Status;
+import org.example.model.Task;
 import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,6 +39,8 @@ public class ProjectDTO {
             message = "Choose a manager"
     )
     private UserDTO projectManager;
+
+    private Set<Task> tasks = new HashSet<>();
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Choose a start date")
