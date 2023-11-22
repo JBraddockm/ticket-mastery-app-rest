@@ -33,6 +33,7 @@
                 <span class="hidden bg-green-50 border-green-500 text-green-900 dark:border-green-400"></span>
                 <form data-th-action="@{/project/{projectCode}/edit(projectCode = *{projectCode})}" method="post" data-th-object="${project}">
                     <input type="hidden" data-th-field="*{projectStatus}"/>
+                    <input type="hidden" data-th-field="*{id}"/>
                     <div class="grid grid-cols-6 gap-6">
                         <div class="col-span-full sm:col-full">
                             <label for="first-name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Project Name </label>
