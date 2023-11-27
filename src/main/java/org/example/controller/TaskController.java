@@ -75,6 +75,7 @@ public class TaskController {
 
       taskService.save(task);
 
+      // TODO Retrieve the task object from the database and get its ID. Currently, it is empty.
       redirectAttributes.addFlashAttribute("createdTask", task.getId());
     }
 
