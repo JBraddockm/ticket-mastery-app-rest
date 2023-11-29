@@ -94,10 +94,10 @@
                             <svg data-th-replace="~{icon-billing}"></svg>
                             <div class="text-sm font-medium text-gray-900 dark:text-white">Billing</div>
                         </a>
-                        <a href="#" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
+                        <form method="post" data-th-action="@{/logout}" class="block p-4 text-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600">
                             <svg data-th-replace="~{icon-logout}"></svg>
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">Logout</div>
-                        </a>
+                            <button type="submit" class="text-sm font-medium text-gray-900 dark:text-white">Logout</button>
+                        </form>
                     </div>
                 </div>
                 <button id="theme-toggle" data-tooltip-target="tooltip-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
@@ -129,7 +129,9 @@
                                 <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem"> Earnings </a>
                             </li>
                             <li>
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem"> Sign out </a>
+                                <form data-th-action="@{/logout}" method="post">
+                                <button type="submit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white" role="menuitem"> Sign out </button>
+                                </form>
                             </li>
                         </ul>
                     </div>
