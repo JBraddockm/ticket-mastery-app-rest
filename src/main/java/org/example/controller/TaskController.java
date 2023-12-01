@@ -3,14 +3,19 @@ package org.example.controller;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import org.example.dto.ProjectDTO;
 import org.example.dto.TaskDTO;
 import org.example.dto.UserDTO;
 import org.example.enums.Status;
 import org.example.exception.TaskNotFoundException;
+import org.example.exception.UserNotFoundException;
+import org.example.model.Task;
 import org.example.service.ProjectService;
 import org.example.service.TaskService;
 import org.example.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,10 +37,14 @@ public class TaskController {
     this.projectService = projectService;
   }
 
-  // TODO This should normally return projects assigned to a particular manager.
   @ModelAttribute("projects")
-  public List<ProjectDTO> getAllProjects() {
-    return projectService.findAll();
+  public List<ProjectDTO> getAllProjects(@AuthenticationPrincipal UserDetails userDetails) {
+
+    UserDTO manager =
+        userService
+            .findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException(userDetails.getUsername()));
+    return projectService.findAllByProjectManagerIs(manager);
   }
 
   @ModelAttribute("employees")
@@ -44,9 +53,21 @@ public class TaskController {
   }
 
   @GetMapping("all")
-  public String viewAllTasks(Model model) {
-    // TODO Add Sorting.
-    model.addAttribute("tasks", taskService.findAll());
+  public String viewAllTasks(Model model, @AuthenticationPrincipal UserDetails userDetails) {
+
+    UserDTO manager =
+        userService
+            .findByUsername(userDetails.getUsername())
+            .orElseThrow(() -> new UserNotFoundException(userDetails.getUsername()));
+
+    // TODO Extract this to the project or task service.
+    List<Task> tasksList =
+        projectService.getCountedListOfProjectDTO(manager).stream()
+            .map(ProjectDTO::getTasks)
+            .flatMap(Set::stream)
+            .toList();
+
+    model.addAttribute("tasks", tasksList);
     return "task/list";
   }
 
@@ -174,9 +195,7 @@ public class TaskController {
     }
 
     TaskDTO updatedTask =
-            taskService
-                    .findById(id)
-                    .orElseThrow(() -> new TaskNotFoundException(id.toString()));
+        taskService.findById(id).orElseThrow(() -> new TaskNotFoundException(id.toString()));
 
     if (task.getId().equals(id)) {
       taskService.updateStatus(task);
