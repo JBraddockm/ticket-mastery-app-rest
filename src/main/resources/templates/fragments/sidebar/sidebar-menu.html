@@ -23,7 +23,7 @@
                             <span class="ml-3">Dashboard</span>
                         </a>
                     </li>
-                    <li>
+                    <li data-sec-authorize="hasRole('Admin')">
                         <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700" aria-controls="dropdown-layouts" data-collapse-toggle="dropdown-layouts">
                             <svg data-th-replace="~{icon-administrator}"></svg>
                             <span class="flex-1 ml-3 text-left whitespace-nowrap">Administrator</span>
@@ -42,7 +42,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li data-sec-authorize="hasRole('Manager')">
                         <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700" aria-controls="dropdown-crud" data-collapse-toggle="dropdown-crud">
                             <svg data-th-replace="~{icon-manager}"></svg>
                             <span class="flex-1 ml-3 text-left whitespace-nowrap">Manager</span>
@@ -57,7 +57,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li>
+                    <li data-sec-authorize="hasRole('Employee')">
                         <button type="button" class="flex items-center w-full p-2 text-base text-gray-900 transition duration-75 rounded-lg group hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700" aria-controls="dropdown-pages" data-collapse-toggle="dropdown-pages">
                             <svg data-th-replace="~{icon-employee}"></svg>
                             <span class="flex-1 ml-3 text-left whitespace-nowrap">Employee</span>
