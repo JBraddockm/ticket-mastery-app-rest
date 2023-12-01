@@ -9,6 +9,8 @@ import org.example.exception.ProjectNotFoundException;
 import org.example.exception.UserNotFoundException;
 import org.example.service.ProjectService;
 import org.example.service.UserService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,6 +65,7 @@ public class ProjectController {
           "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
       return "project/create";
     } else {
+      // TODO ProjectCode has to be unique. Check to validate.
       projectService.save(project);
       redirectAttributes.addFlashAttribute("createdProject", project.getProjectCode());
     }
@@ -160,13 +163,15 @@ public class ProjectController {
   }
 
   @GetMapping("/manager/project-status")
-  public String newGetProjectByManager(Model model) {
+  public String newGetProjectByManager(
+      Model model, @AuthenticationPrincipal UserDetails userDetails) {
 
-    // TODO Log in will determine the manager after implementing Spring Security.
     UserDTO manager =
         userService
-            .findByUsername("johnkelly@example.com")
-            .orElseThrow(() -> new UserNotFoundException("johnkelly@example.com"));
+            .findByUsername(userDetails.getUsername())
+            .orElseThrow(
+                () ->
+                    new UserNotFoundException(userDetails.getUsername()));
 
     model.addAttribute("projects", projectService.getCountedListOfProjectDTO(manager));
 
