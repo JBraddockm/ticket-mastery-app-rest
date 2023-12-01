@@ -24,8 +24,12 @@ public class User extends BaseEntity{
             name = "username"
     )
     private String username;
+
     private String password;
+
+    //TODO Remove confirmPassword field.
     private String confirmPassword;
+
     private String phoneNumber;
 
     @ManyToOne(
