@@ -1,3 +1,11 @@
+CREATE TABLE IF NOT EXISTS persistent_logins
+(
+    username  VARCHAR(64) NOT NULL,
+    series    VARCHAR(64) PRIMARY KEY,
+    token     VARCHAR(64) NOT NULL,
+    last_used TIMESTAMP   NOT NULL
+);
+
 INSERT INTO role (created_on, created_by, updated_on, updated_by, description, is_deleted)
 VALUES (current_timestamp, 1, null, null, 'Admin', false),
        (current_timestamp, 1, null, null, 'Manager', false),
@@ -5,15 +13,18 @@ VALUES (current_timestamp, 1, null, null, 'Admin', false),
 
 INSERT INTO users (created_on, created_by, updated_on, updated_by, is_enabled, role_id, first_name, last_name, username,
                    gender, password, confirm_password, phone_number, is_deleted)
-VALUES (current_timestamp, 1, null, null, true, 1, 'Ferdinand', 'Conaboy', 'fconaboy0@mac.com', 'OTHER', '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
+VALUES (current_timestamp, 1, null, null, true, 1, 'Ferdinand', 'Conaboy', 'fconaboy0@mac.com', 'OTHER',
+        '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
         '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC', '+447514234568', false);
 INSERT INTO users (created_on, created_by, updated_on, updated_by, is_enabled, role_id, first_name, last_name, username,
                    gender, password, confirm_password, phone_number, is_deleted)
-VALUES (current_timestamp, 1, null, null, true, 2, 'John', 'Kelly', 'johnkelly@example.com', 'OTHER', '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
+VALUES (current_timestamp, 1, null, null, true, 2, 'John', 'Kelly', 'johnkelly@example.com', 'OTHER',
+        '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
         '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC', '+447514234568', false);
 INSERT INTO users (created_on, created_by, updated_on, updated_by, is_enabled, role_id, first_name, last_name, username,
                    gender, password, confirm_password, phone_number, is_deleted)
-VALUES (current_timestamp, 1, null, null, true, 3, 'James', 'Brook', 'jamesbrook@example.com', 'MALE', '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
+VALUES (current_timestamp, 1, null, null, true, 3, 'James', 'Brook', 'jamesbrook@example.com', 'MALE',
+        '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC',
         '$2a$12$n7If7QzAkZXh5IEgHAIqi.Xu5BWtaazYT.IoZqnKVWiMvD52jnhVC', '+447514234568', false);
 
 
