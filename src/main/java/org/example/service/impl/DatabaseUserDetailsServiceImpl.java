@@ -1,6 +1,5 @@
 package org.example.service.impl;
 
-import static java.lang.String.format;
 
 import org.example.exception.UserNotFoundException;
 import org.example.model.User;
@@ -28,10 +27,7 @@ public class DatabaseUserDetailsServiceImpl implements DatabaseUserDetailsServic
     User user =
         userRepository
             .findByUsername(username)
-            .orElseThrow(
-                () ->
-                    new UserNotFoundException(
-                        format("User with email %s could not be found", username)));
+            .orElseThrow(() -> new UserNotFoundException(username));
 
     return new UserPrincipal(user);
   }
