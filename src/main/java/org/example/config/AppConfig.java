@@ -15,7 +15,7 @@ import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
 @Configuration
-@EnableJpaAuditing()
+@EnableJpaAuditing
 public class AppConfig {
 
   private final DataSource dataSource;
