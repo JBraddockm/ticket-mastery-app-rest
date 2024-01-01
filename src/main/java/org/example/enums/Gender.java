@@ -1,18 +1,18 @@
 package org.example.enums;
 
 public enum Gender {
-    MALE("Male"),
-    FEMALE("Female"),
-    OTHER("Other");
+  MALE("Male"),
+  FEMALE("Female"),
+  OTHER("Other");
 
-    private final String gender;
+  private final String gender;
 
-    Gender(String gender) {
-        this.gender = gender;
-    }
+  Gender(String gender) {
+    this.gender = gender;
+  }
 
-    @Override
-    public String toString() {
-        return this.gender;
-    }
+  @Override
+  public String toString() {
+    return this.gender;
+  }
 }
