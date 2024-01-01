@@ -1,126 +1,171 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.example.dto.RoleDTO;
-import org.example.dto.UserDTO;
-import org.example.enums.Gender;
-import org.example.exception.UserNotFoundException;
-import org.example.service.RoleService;
-import org.example.service.UserService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Arrays;
 import java.util.List;
+import org.example.dto.UserDTO;
+import org.example.exception.UserNotFoundException;
+import org.example.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/user")
+@RestController
+@RequestMapping("/api/v1/users")
+@Tag(
+    name = "user",
+    description = "Everything about User",
+    externalDocs =
+        @ExternalDocumentation(
+            url = "https://github.com/jbraddockm",
+            description = "Find out more"))
 public class UserController {
 
   private final UserService userService;
-  private final RoleService roleService;
 
-  public UserController(UserService userService, RoleService roleService) {
+  public UserController(UserService userService) {
     this.userService = userService;
-    this.roleService = roleService;
   }
 
-  @ModelAttribute("genders")
-  public List<Gender> getGenders() {
-    return Arrays.stream(Gender.values()).toList();
+  @GetMapping
+  @Operation(
+      summary = "Get a list of users",
+      description = "Returns a list of users",
+      operationId = "readAllUsers")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(name = "User", implementation = UserDTO.class, title = "User")))
+      })
+  public List<UserDTO> readAllUsers() {
+    return userService.findAll();
   }
 
-  @ModelAttribute("roles")
-  public List<RoleDTO> getRoles() {
-    return roleService.findAll();
+  @GetMapping("{username}")
+  @Operation(
+      summary = "Find user by username",
+      description = "Returns a single user",
+      operationId = "getUserByUsername")
+  @Parameters(
+      @Parameter(
+          name = "username",
+          description = "Username of user to return",
+          example = "info@example.org"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(name = "User", implementation = UserDTO.class, title = "User"))),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
+      })
+  public UserDTO getUserByUsername(@PathVariable("username") String username) {
+    return userService
+        .findByUsername(username)
+        .orElseThrow(() -> new UserNotFoundException(username));
   }
 
-  // New
-  @GetMapping("/all")
-  public String viewAllUsers(Model model) {
-    model.addAttribute("users", userService.findAll());
-    return "user/list";
+  @PostMapping
+  @Operation(
+      summary = "Create a user",
+      description = "Create a single user",
+      operationId = "createUser")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(name = "User", implementation = UserDTO.class, title = "User"))),
+        @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
+      })
+  public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
+    userService.save(userDTO);
+    return userService
+        .findByUsername(userDTO.getUsername())
+        .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
   }
 
-  @GetMapping("/create")
-  public String newCreateUser(UserDTO user, Model model) {
+  @PutMapping
+  @Operation(
+      summary = "Update an existing user",
+      description = "Updates an existing user",
+      operationId = "updateUser")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(name = "User", implementation = UserDTO.class, title = "User"))),
+        @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
+        @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
+      })
+  public UserDTO updateUser(@Valid @RequestBody UserDTO userDTO) {
 
-    model.addAttribute("user", user);
+    userService
+        .findByUsername(userDTO.getUsername())
+        .ifPresentOrElse(
+            user -> userService.update(userDTO),
+            () -> {
+              throw new UserNotFoundException(userDTO.getUsername());
+            });
 
-    return "user/create";
+    return userService
+        .findByUsername(userDTO.getUsername())
+        .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
   }
 
-  @PostMapping("/create")
-  public String newCreateUser(
-      @Valid @ModelAttribute("user") UserDTO user,
-      BindingResult result,
-      RedirectAttributes redirectAttributes,
-      Model model) {
+  // TODO PatchMapping for partially updating User.
 
-    if (result.hasErrors()) {
-      model.addAttribute(
-          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-      return "user/create";
-    } else {
-      userService.save(user);
-      redirectAttributes.addFlashAttribute("createdUser", user.getUsername());
-    }
-
-    return "redirect:/user/all";
-  }
-
-  @PostMapping("{username}/delete")
-  public String newDeleteUser(
-      @PathVariable("username") String username, RedirectAttributes redirectAttributes) {
-
-    UserDTO user =
-        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-    userService.deleteByUsername(username);
-
-    redirectAttributes.addFlashAttribute("deletedUser", user.getUsername());
-
-    return "redirect:/user/all";
-  }
-
-  @GetMapping("{username}/edit")
-  public String newEditUser(@PathVariable("username") String username, Model model) {
-
-    UserDTO user =
-        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-    model.addAttribute("user", user);
-
-    return "user/update";
-  }
-
-  @PostMapping("{username}/edit")
-  public String newEditUser(
-      @Valid @ModelAttribute("user") UserDTO user,
-      BindingResult result,
-      @PathVariable("username") String username,
-      Model model,
-      RedirectAttributes redirectAttributes) {
-
-    if (result.hasErrors()) {
-      model.addAttribute(
-          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-      return "user/update";
-    }
-
+  @DeleteMapping("{username}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(
+      summary = "Delete a user",
+      description = "Deletes a single user",
+      operationId = "deleteUser")
+  @Parameters(
+      @Parameter(
+          name = "username",
+          description = "Username of user to delete",
+          example = "info@example.org"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Successful operation",
+            content = @Content()),
+        @ApiResponse(responseCode = "404", description = "Invalid user value", content = @Content())
+      })
+  public void deleteUser(@PathVariable("username") String username) {
+    // TODO Check if user can be deleted.
     UserDTO updatedUser =
         userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
 
-    if (updatedUser.getUsername().equals(user.getUsername())) {
-      userService.update(user);
-      redirectAttributes.addFlashAttribute("updatedUser", user.getUsername());
-    } else {
-      redirectAttributes.addFlashAttribute("updateError", "Error Message");
-    }
-
-    return "redirect:/user/all";
+    userService.deleteByUsername(updatedUser.getUsername());
   }
 }
