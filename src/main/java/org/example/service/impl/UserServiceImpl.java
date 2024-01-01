@@ -8,26 +8,26 @@ import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.example.service.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implements UserService {
 
   private final UserRepository userRepository;
-  private final PasswordEncoder passwordEncoder;
+  // TODO Reintroduce PasswordEncoder after implementing Spring Security.
+//  private final PasswordEncoder passwordEncoder;
 
   public UserServiceImpl(
-      ModelMapper modelMapper, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+      ModelMapper modelMapper, UserRepository userRepository) {
     super(modelMapper, User.class, UserDTO.class);
     this.userRepository = userRepository;
-    this.passwordEncoder = passwordEncoder;
   }
 
   @Override
   public UserDTO save(UserDTO userDTO) {
     User user = this.mapToEntity(userDTO);
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
+//    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    user.setPassword(user.getPassword());
     user.setEnabled(true);
     userRepository.save(user);
     return this.mapToDTO(user);
@@ -64,7 +64,8 @@ public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implem
     updatedUser.setId(user.getId());
 
     // TODO Password should not be in the user update form. A new method and controller is needed.
-    updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    updatedUser.setPassword(user.getPassword());
+//    updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
     updatedUser.setEnabled(true);
 
     // Save updated User.
