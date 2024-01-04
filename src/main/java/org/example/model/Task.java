@@ -1,11 +1,10 @@
 package org.example.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.enums.Status;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "tasks")
