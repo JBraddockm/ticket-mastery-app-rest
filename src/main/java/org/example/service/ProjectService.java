@@ -24,9 +24,5 @@ public interface ProjectService {
 
   List<ProjectDTO> findAllByProjectStatusIsNot(Status status);
 
-  List<ProjectDTO> getCountedListOfProjectDTO(UserDTO manager);
-
-  ProjectDTO mapToDTO(Project project);
-
-  Project mapToEntity(ProjectDTO projectDTO);
+//  List<ProjectDTO> getCountedListOfProjectDTO(UserDTO manager);
 }
