@@ -101,10 +101,7 @@ public class UserController {
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
   public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
-    userService.save(userDTO);
-    return userService
-        .findByUsername(userDTO.getUsername())
-        .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
+    return userService.save(userDTO);
   }
 
   @PutMapping
@@ -126,18 +123,7 @@ public class UserController {
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
   public UserDTO updateUser(@Valid @RequestBody UserDTO userDTO) {
-
-    userService
-        .findByUsername(userDTO.getUsername())
-        .ifPresentOrElse(
-            user -> userService.update(userDTO),
-            () -> {
-              throw new UserNotFoundException(userDTO.getUsername());
-            });
-
-    return userService
-        .findByUsername(userDTO.getUsername())
-        .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
+    return userService.update(userDTO);
   }
 
   // TODO PatchMapping for partially updating User.
@@ -163,9 +149,6 @@ public class UserController {
       })
   public void deleteUser(@PathVariable("username") String username) {
     // TODO Check if user can be deleted.
-    UserDTO updatedUser =
-        userService.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
-
-    userService.deleteByUsername(updatedUser.getUsername());
+    userService.deleteByUsername(username);
   }
 }

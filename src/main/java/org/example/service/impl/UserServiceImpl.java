@@ -11,14 +11,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implements UserService {
+public class UserServiceImpl extends AbstractMapperService<User, UserDTO> implements UserService {
 
   private final UserRepository userRepository;
-  // TODO Reintroduce PasswordEncoder after implementing Spring Security.
-//  private final PasswordEncoder passwordEncoder;
 
-  public UserServiceImpl(
-      ModelMapper modelMapper, UserRepository userRepository) {
+  // TODO Reintroduce PasswordEncoder after implementing Spring Security.
+  //  private final PasswordEncoder passwordEncoder;
+
+  public UserServiceImpl(ModelMapper modelMapper, UserRepository userRepository) {
     super(modelMapper, User.class, UserDTO.class);
     this.userRepository = userRepository;
   }
@@ -26,8 +26,8 @@ public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implem
   @Override
   public UserDTO save(UserDTO userDTO) {
     User user = this.mapToEntity(userDTO);
-//    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    user.setPassword(user.getPassword());
+    //    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    user.setPassword(userDTO.getPassword());
     user.setEnabled(true);
     userRepository.save(user);
     return this.mapToDTO(user);
@@ -45,7 +45,12 @@ public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implem
 
   @Override
   public void deleteByUsername(String username) {
-    userRepository.deleteByUsername(username);
+    this.findByUsername(username)
+        .ifPresentOrElse(
+            user -> userRepository.deleteByUsername(username),
+            () -> {
+              throw new UserNotFoundException(username);
+            });
   }
 
   @Override
@@ -57,22 +62,17 @@ public class UserServiceImpl extends AbstractCommonService<User, UserDTO> implem
             .findByUsername(userDTO.getUsername())
             .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
 
-    // Convert DTO to User
-    User updatedUser = this.mapToEntity(userDTO);
-
     // Get the User ID and Set it to updated user
-    updatedUser.setId(user.getId());
+    userDTO.setId(user.getId());
 
     // TODO Password should not be in the user update form. A new method and controller is needed.
-    updatedUser.setPassword(user.getPassword());
-//    updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
-    updatedUser.setEnabled(true);
+    userDTO.setPassword(user.getPassword());
+    //    updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
 
-    // Save updated User.
-    userRepository.save(updatedUser);
+    userDTO.setEnabled(true);
 
-    // Return the updated user
-    return this.findByUsername(updatedUser.getUsername()).orElseThrow();
+    // Save and return the updated user
+    return this.save(userDTO);
   }
 
   @Override
