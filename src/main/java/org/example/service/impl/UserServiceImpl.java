@@ -4,43 +4,45 @@ import java.util.List;
 import java.util.Optional;
 import org.example.dto.UserDTO;
 import org.example.exception.UserNotFoundException;
+import org.example.mapper.UserMapper;
 import org.example.model.User;
 import org.example.repository.UserRepository;
 import org.example.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl extends AbstractMapperService<User, UserDTO> implements UserService {
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+
+  private final UserMapper userMapper;
 
   // TODO Reintroduce PasswordEncoder after implementing Spring Security.
   //  private final PasswordEncoder passwordEncoder;
 
-  public UserServiceImpl(ModelMapper modelMapper, UserRepository userRepository) {
-    super(modelMapper, User.class, UserDTO.class);
+  public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
     this.userRepository = userRepository;
+    this.userMapper = userMapper;
   }
 
   @Override
   public UserDTO save(UserDTO userDTO) {
-    User user = this.mapToEntity(userDTO);
+    User user = userMapper.mapToEntity(userDTO);
     //    user.setPassword(passwordEncoder.encode(user.getPassword()));
     user.setPassword(userDTO.getPassword());
     user.setEnabled(true);
     userRepository.save(user);
-    return this.mapToDTO(user);
+    return userMapper.mapToDTO(user);
   }
 
   @Override
   public List<UserDTO> findAll() {
-    return userRepository.findAll().stream().map(this::mapToDTO).toList();
+    return userRepository.findAll().stream().map(userMapper::mapToDTO).toList();
   }
 
   @Override
   public Optional<UserDTO> findByUsername(String userName) {
-    return userRepository.findByUsername(userName).map(this::mapToDTO);
+    return userRepository.findByUsername(userName).map(userMapper::mapToDTO);
   }
 
   @Override
@@ -79,7 +81,7 @@ public class UserServiceImpl extends AbstractMapperService<User, UserDTO> implem
   public List<UserDTO> findAllManagers() {
     return userRepository.findAll().stream()
         .filter(user -> user.getRole().getId().equals(2L))
-        .map(this::mapToDTO)
+        .map(userMapper::mapToDTO)
         .toList();
   }
 
@@ -87,7 +89,7 @@ public class UserServiceImpl extends AbstractMapperService<User, UserDTO> implem
   public List<UserDTO> findAllEmployees() {
     return userRepository.findAll().stream()
         .filter(user -> user.getRole().getId().equals(3L))
-        .map(this::mapToDTO)
+        .map(userMapper::mapToDTO)
         .toList();
   }
 }

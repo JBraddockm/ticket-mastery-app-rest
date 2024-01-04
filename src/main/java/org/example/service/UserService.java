@@ -14,6 +14,4 @@ public interface UserService {
     UserDTO save(UserDTO userDTO);
     UserDTO update(UserDTO dto);
     void deleteByUsername(String username);
-    UserDTO mapToDTO(User user);
-    User mapToEntity(UserDTO userDTO);
 }
