@@ -9,42 +9,30 @@ import org.example.enums.Gender;
 @Data
 @Entity
 @Table(
-        name = "users",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "user_username_unique",
-                        columnNames = "username"
-                )
-        }
-)
-public class User extends BaseEntity{
-    private String firstName;
-    private String lastName;
-    @Column(
-            name = "username"
-    )
-    private String username;
+    name = "users",
+    uniqueConstraints = {
+      @UniqueConstraint(name = "user_username_unique", columnNames = "username")
+    })
+public class User extends BaseEntity {
+  private String firstName;
+  private String lastName;
 
-    private String password;
+  @Column(name = "username")
+  private String username;
 
-    //TODO Remove confirmPassword field.
-    private String confirmPassword;
+  private String password;
 
-    private String phoneNumber;
+  // TODO Remove confirmPassword field.
+  private String confirmPassword;
 
-    @ManyToOne(
-            fetch = FetchType.LAZY
-    )
-    @JoinColumn(
-            foreignKey = @ForeignKey(
-                    name = "users_role_id_fk"
-            )
-    )
-    private Role role;
+  private String phoneNumber;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(foreignKey = @ForeignKey(name = "users_role_id_fk"))
+  private Role role;
 
-    private boolean isEnabled;
+  @Enumerated(EnumType.STRING)
+  private Gender gender;
 
+  private boolean isEnabled;
 }
