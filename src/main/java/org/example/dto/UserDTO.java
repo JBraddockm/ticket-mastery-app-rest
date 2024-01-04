@@ -23,11 +23,10 @@ import org.example.enums.Gender;
 })
 @Schema(name="User")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"}, ignoreUnknown = true)
 public class UserDTO {
 
   @Schema(example = "1")
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
 
   @NotBlank(message = "First name cannot be empty")
