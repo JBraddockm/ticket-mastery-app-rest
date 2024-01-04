@@ -1,6 +1,6 @@
 package org.example.service;
 
-public interface CommonService<E, D> {
+public interface MapperService<E, D> {
 
     E mapToEntity(D type);
 
