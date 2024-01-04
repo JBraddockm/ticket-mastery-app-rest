@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskMapper extends AbstractMapperService<Task, TaskDTO> {
 
-    public TaskMapper(ModelMapper modelMapper) {
-        super(modelMapper, Task.class, TaskDTO.class);
-    }
+  public TaskMapper(ModelMapper modelMapper) {
+    super(modelMapper, Task.class, TaskDTO.class);
+  }
 
-    @Override
-    public Task mapToEntity(TaskDTO type) {
-        return super.mapToEntity(type);
-    }
+  @Override
+  public Task mapToEntity(TaskDTO type) {
+    return super.mapToEntity(type);
+  }
 
-    @Override
-    public TaskDTO mapToDTO(Task type) {
-        return super.mapToDTO(type);
-    }
+  @Override
+  public TaskDTO mapToDTO(Task type) {
+    return super.mapToDTO(type);
+  }
 }
