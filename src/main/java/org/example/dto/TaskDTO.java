@@ -1,52 +1,46 @@
 package org.example.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.enums.Status;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer"}, ignoreUnknown = true)
+@Schema(name="Task")
 public class TaskDTO {
 
-    private Long id;
+  @Schema(example = "1")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Long id;
 
-    @NotNull(
-            message = "Choose a project"
-    )
-    private ProjectDTO project;
+  @NotNull(message = "Choose a project")
+  @Schema(example = "Spring Boot Data JPA")
+  private ProjectDTO project;
 
-    @NotNull(
-            message = "Choose an employee"
-    )
-    private UserDTO assignedEmployee;
+  @NotNull(message = "Choose an employee")
+  private UserDTO assignedEmployee;
 
-    @NotBlank(
-            message = "Enter a task title"
-    )
-    private String taskSubject;
+  @NotBlank(message = "Enter a task title")
+  @Schema(example = "Caching with Hibernate")
+  private String taskSubject;
 
-    @NotBlank(
-            message = "Add task details"
-    )
-    private String taskDetail;
+  @NotBlank(message = "Add task details")
+  @Schema(example = "Caching in Hibernate refers to the technique of storing frequently accessed data in memory to improve the performance of an application that uses Hibernate as an Object-Relational Mapping (ORM) framework.")
+  private String taskDetail;
 
-    private Status status;
-    private LocalDate assignedDate;
+  private Status status;
 
-    public TaskDTO(ProjectDTO project, UserDTO assignedEmployee, String taskSubject, String taskDetail, Status status, LocalDate assignedDate) {
-        this.project = project;
-        this.assignedEmployee = assignedEmployee;
-        this.taskSubject = taskSubject;
-        this.taskDetail = taskDetail;
-        this.status = status;
-        this.assignedDate = assignedDate;
-        this.id = UUID.randomUUID().getMostSignificantBits();
-    }
+  @Schema(example = "2024-01-01")
+  private LocalDate assignedDate;
 }
