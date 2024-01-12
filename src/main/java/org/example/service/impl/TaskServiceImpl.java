@@ -82,6 +82,12 @@ public class TaskServiceImpl implements TaskService {
   }
 
   @Override
+  public Optional<TaskDTO> findById(Long id) {
+    return taskRepository.findById(id).map(taskMapper::mapToDTO);
+  }
+
+
+  @Override
   public TaskDTO updateTask(Long taskId, TaskProcessDTO taskProcessDTO) {
 
     this.findById(taskId)
@@ -118,11 +124,6 @@ public class TaskServiceImpl implements TaskService {
             () -> {
               throw new TaskNotFoundException(String.valueOf(taskId));
             });
-  }
-
-  @Override
-  public Optional<TaskDTO> findById(Long id) {
-    return taskRepository.findById(id).map(taskMapper::mapToDTO);
   }
 
   @Override
