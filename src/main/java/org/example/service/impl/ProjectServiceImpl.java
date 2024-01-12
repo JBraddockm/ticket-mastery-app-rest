@@ -6,13 +6,13 @@ import org.example.dto.ProjectDTO;
 import org.example.dto.UserDTO;
 import org.example.enums.Status;
 import org.example.exception.ProjectNotFoundException;
+import org.example.exception.UserNotFoundException;
 import org.example.mapper.ProjectMapper;
+import org.example.mapper.UserMapper;
 import org.example.model.Project;
 import org.example.repository.ProjectRepository;
 import org.example.service.ProjectService;
-import org.example.service.TaskService;
 import org.example.service.UserService;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,26 +20,22 @@ public class ProjectServiceImpl implements ProjectService {
 
   private final ProjectRepository projectRepository;
   private final ProjectMapper projectMapper;
-  private final TaskService taskService;
+  private final UserMapper userMapper;
   private final UserService userService;
 
   public ProjectServiceImpl(
-      @Lazy TaskService taskService,
       ProjectRepository projectRepository,
       ProjectMapper projectMapper,
+      UserMapper userMapper,
       UserService userService) {
-    this.taskService = taskService;
     this.projectRepository = projectRepository;
     this.projectMapper = projectMapper;
+    this.userMapper = userMapper;
     this.userService = userService;
   }
 
   @Override
   public ProjectDTO save(ProjectDTO projectDTO) {
-
-    if (projectDTO.getProjectStatus() == null) {
-      projectDTO.setProjectStatus(Status.OPEN);
-    }
 
     Project project = projectMapper.mapToEntity(projectDTO);
 
@@ -52,32 +48,56 @@ public class ProjectServiceImpl implements ProjectService {
     return projectRepository.findAll().stream().map(projectMapper::mapToDTO).toList();
   }
 
-  @Override
-  public void update(ProjectDTO projectDTO) {
-
-    Project updatedProject = projectMapper.mapToEntity(projectDTO);
-
-    projectRepository.save(updatedProject);
-  }
-
-  @Override
-  public void deleteByProjectCode(String projectCode) {
-    projectRepository.deleteByProjectCode(projectCode);
-  }
-
   public Optional<ProjectDTO> findByProjectCode(String projectCode) {
     return projectRepository.findByProjectCode(projectCode).map(projectMapper::mapToDTO);
   }
 
   @Override
-  public void complete(ProjectDTO projectDTO) {
-    Project project =
-        projectRepository
-            .findById(projectDTO.getId())
-            .orElseThrow(() -> new ProjectNotFoundException(projectDTO.getProjectCode()));
+  public ProjectDTO createProject(ProjectDTO projectDTO) {
+    if (projectDTO.getProjectStatus() == null) {
+      projectDTO.setProjectStatus(Status.OPEN);
+    }
+    return this.save(projectDTO);
+  }
 
-    project.setProjectStatus(Status.COMPLETED);
-    projectRepository.save(project);
+  @Override
+  public ProjectDTO updateProject(String projectCode, ProjectDTO projectDTO) {
+
+    this.findByProjectCode(projectCode)
+        .ifPresentOrElse(
+            project -> {
+              projectDTO.setProjectCode(project.getProjectCode());
+              projectDTO.setId(project.getId());
+            },
+            () -> {
+              throw new ProjectNotFoundException(projectCode);
+            });
+
+    return this.save(projectDTO);
+  }
+
+  @Override
+  public void deleteByProjectCode(String projectCode) {
+
+    // TODO Change Project Code during soft delete.
+
+    this.findByProjectCode(projectCode)
+        .ifPresentOrElse(
+            projectDTO -> projectRepository.deleteByProjectCode(projectCode),
+            () -> {
+              throw new ProjectNotFoundException(projectCode);
+            });
+  }
+
+  @Override
+  public ProjectDTO completeProject(String projectCode) {
+    ProjectDTO projectDTO =
+        this.findByProjectCode(projectCode)
+            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
+
+    projectDTO.setProjectStatus(Status.COMPLETED);
+    // TODO Handle pending tasks in this completed project.
+    return this.save(projectDTO);
   }
 
   @Override
@@ -88,37 +108,16 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public List<ProjectDTO> findAllByProjectManagerIs(UserDTO manager) {
-    //    return
-    // projectRepository.findAllByProjectManagerIs(userService.mapToEntity(manager)).stream()
-    //        .map(this::mapToDTO)
-    //        .toList();
-    return null;
-  }
+  public List<ProjectDTO> findAllByProjectManagerIs() {
 
-  //  @Override
-  //  public List<ProjectDTO> getCountedListOfProjectDTO(UserDTO manager) {
-  //    return this.findAllByProjectManagerIs(manager).stream()
-  //        .map(
-  //            projectDTO -> {
-  //              Map<Boolean, List<TaskDTO>> collect =
-  //                  projectDTO.getTasks().stream()
-  //                      .map(taskService::mapToDTO)
-  //                      .collect(
-  //                          Collectors.partitioningBy(
-  //                              taskDTO -> taskDTO.getStatus().equals(Status.COMPLETED)));
-  //
-  //              // Completed Tasks
-  //              int completeTaskCounts = collect.get(true).size();
-  //
-  //              // Unfinished Tasks
-  //              int unfinishedTaskCounts = collect.get(false).size();
-  //
-  //              projectDTO.setCompleteTaskCounts(completeTaskCounts);
-  //              projectDTO.setUnfinishedTaskCounts(unfinishedTaskCounts);
-  //
-  //              return projectDTO;
-  //            })
-  //        .toList();
-  //  }
+    // TODO Get the logged in manager.
+    UserDTO manager =
+        userService
+            .findByUsername("johnkelly@example.com")
+            .orElseThrow(() -> new UserNotFoundException("johnkelly@example.com"));
+
+    return projectRepository.findAllByProjectManagerIs(userMapper.mapToEntity(manager)).stream()
+        .map(projectMapper::mapToDTO)
+        .toList();
+  }
 }
