@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,7 @@ public class ErrorResponse {
   public static ResponseEntity<Object> buildErrorResponse(
       HttpStatus httpStatus, String message, List<String> errors, HttpServletRequest request) {
 
-    Map<String, Object> map = new HashMap<>();
+    Map<String, Object> map = new LinkedHashMap<>();
 
     map.put("status", httpStatus.value());
 
