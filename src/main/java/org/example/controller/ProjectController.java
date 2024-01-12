@@ -1,180 +1,223 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.example.dto.ProjectDTO;
-import org.example.dto.UserDTO;
-import org.example.enums.Status;
 import org.example.exception.ProjectNotFoundException;
-import org.example.exception.UserNotFoundException;
 import org.example.service.ProjectService;
-import org.example.service.UserService;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-@RequestMapping("/project")
+@RestController
+@RequestMapping("/api/v1/projects")
+@Tag(
+        name = "project",
+        description = "Everything about Project",
+        externalDocs =
+        @ExternalDocumentation(
+                url = "https://github.com/jbraddockm",
+                description = "Find out more"))
 public class ProjectController {
-
   private final ProjectService projectService;
-  private final UserService userService;
 
-  public ProjectController(ProjectService projectService, UserService userService) {
+  public ProjectController(ProjectService projectService) {
     this.projectService = projectService;
-    this.userService = userService;
   }
 
-  @ModelAttribute("status")
-  private Status getStatusOpen() {
-    return Status.OPEN;
+  @GetMapping
+  @Operation(
+      summary = "Get a list of projects",
+      description = "Returns a list of projects",
+      operationId = "readAllProjects")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(
+                            name = "Project",
+                            implementation = ProjectDTO.class,
+                            title = "Project")))
+      })
+  public List<ProjectDTO> readAllProjects() {
+    return projectService.findAll();
   }
 
-  @ModelAttribute("managers")
-  private List<UserDTO> getAllManagers() {
-    return userService.findAllManagers();
+  @GetMapping("{projectCode}")
+  @Operation(
+      summary = "Find project by project code",
+      description = "Returns a single project",
+      operationId = "getProjectById")
+  @Parameters(
+      @Parameter(
+          name = "projectCode",
+          description = "Project code of project to return",
+          example = "P1001"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(
+                            name = "Project",
+                            implementation = ProjectDTO.class,
+                            title = "Project"))),
+        @ApiResponse(responseCode = "404", description = "Project not found", content = @Content())
+      })
+  public ProjectDTO getProjectById(@PathVariable("projectCode") String projectCode) {
+    return projectService
+        .findByProjectCode(projectCode)
+        .orElseThrow(() -> new ProjectNotFoundException(projectCode));
   }
 
-  @GetMapping("all")
-  private String viewAllProjects(Model model) {
-    model.addAttribute("projects", projectService.findAll());
-    return "project/list";
+  @PostMapping
+  @Operation(
+      summary = "Create a project",
+      description = "Create a single project",
+      operationId = "createProject")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(
+                            name = "Project",
+                            implementation = ProjectDTO.class,
+                            title = "Project"))),
+        @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
+      })
+  public ProjectDTO createProject(@Valid @RequestBody ProjectDTO projectDTO) {
+    return projectService.createProject(projectDTO);
   }
 
-  @GetMapping("/create")
-  public String newCreateProject(Model model, ProjectDTO project) {
-
-    model.addAttribute("project", project);
-
-    return "project/create";
+  @PutMapping("{projectCode}")
+  @Operation(
+      summary = "Update an existing project",
+      description = "Update an existing project",
+      operationId = "updateProject")
+  @Parameters(
+      @Parameter(
+          name = "projectCode",
+          description = "Project code of project to update",
+          example = "P1001"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Successful operation",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema =
+                        @Schema(
+                            name = "Project",
+                            implementation = ProjectDTO.class,
+                            title = "Project"))),
+        @ApiResponse(responseCode = "404", description = "Project not found", content = @Content()),
+        @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
+      })
+  public ProjectDTO updateProject(
+      @PathVariable("projectCode") String projectCode, @Valid @RequestBody ProjectDTO projectDTO) {
+    return projectService.updateProject(projectCode, projectDTO);
   }
 
-  @PostMapping("/create")
-  public String newCreateProject(
-      @Valid @ModelAttribute("project") ProjectDTO project,
-      BindingResult result,
-      Model model,
-      RedirectAttributes redirectAttributes) {
-
-    if (result.hasErrors()) {
-      model.addAttribute(
-          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-      return "project/create";
-    } else {
-      // TODO ProjectCode has to be unique. Check to validate.
-      projectService.save(project);
-      redirectAttributes.addFlashAttribute("createdProject", project.getProjectCode());
-    }
-
-    return "redirect:/project/all";
-  }
-
-  @PostMapping("{projectCode}/delete")
-  public String newDeleteProject(
-      @PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes) {
-
-    ProjectDTO deletedProject =
-        projectService
-            .findByProjectCode(projectCode)
-            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
-
-    if (deletedProject.getProjectCode().equals(projectCode)) {
-      projectService.deleteByProjectCode(projectCode);
-      redirectAttributes.addFlashAttribute("deletedProject", deletedProject.getProjectCode());
-    }
-
-    return "redirect:/project/all";
-  }
-
-  @GetMapping("{projectCode}/edit")
-  public String newUpdateProject(@PathVariable("projectCode") String projectCode, Model model) {
-
-    ProjectDTO project =
-        projectService
-            .findByProjectCode(projectCode)
-            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
-
-    model.addAttribute("project", project);
-
-    return "project/update";
-  }
-
-  @PostMapping("{projectCode}/edit")
-  public String newUpdateProject(
-      @Valid @ModelAttribute("project") ProjectDTO project,
-      BindingResult result,
-      @PathVariable("projectCode") String projectCode,
-      RedirectAttributes redirectAttributes,
-      Model model) {
-
-    if (result.hasErrors()) {
-      model.addAttribute(
-          "isValid", "bg-green-50 border-green-500 text-green-900 dark:border-green-400 ");
-      return "project/update";
-    }
-
-    ProjectDTO updatedProject =
-        projectService
-            .findByProjectCode(projectCode)
-            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
-
-    if (project.getProjectCode().equals(projectCode)) {
-      projectService.update(project);
-      redirectAttributes.addFlashAttribute("updatedProject", updatedProject.getProjectCode());
-    }
-
-    return "redirect:/project/all";
-  }
-
-  @PostMapping("{projectCode}/complete")
-  public String newCompleteProject(
-      @PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes) {
-
-    ProjectDTO completedProject =
-        projectService
-            .findByProjectCode(projectCode)
-            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
-
-    if (completedProject.getProjectCode().equals(projectCode)) {
-      projectService.complete(completedProject);
-      redirectAttributes.addFlashAttribute("completedProject", completedProject.getProjectCode());
-    }
-
-    return "redirect:/project/all";
-  }
-
-  @PostMapping("/manager/{projectCode}/complete")
-  public String newManagerCompleteProject(
-      @PathVariable("projectCode") String projectCode, RedirectAttributes redirectAttributes) {
-
-    ProjectDTO completedProject =
-        projectService
-            .findByProjectCode(projectCode)
-            .orElseThrow(() -> new ProjectNotFoundException(projectCode));
-
-    projectService.complete(completedProject);
-    redirectAttributes.addFlashAttribute("completedProject", completedProject.getProjectCode());
-
-    return "redirect:/project/manager/project-status";
+  @DeleteMapping("{projectCode}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(
+      summary = "Delete a project",
+      description = "Deletes a single project",
+      operationId = "deleteByProjectCode")
+  @Parameters(
+      @Parameter(
+          name = "projectCode",
+          description = "Project code of project to delete",
+          example = "P1001"))
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Successful operation",
+            content = @Content()),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Invalid project value",
+            content = @Content())
+      })
+  public void deleteProject(@PathVariable("projectCode") String projectCode) {
+    projectService.deleteByProjectCode(projectCode);
   }
 
   @GetMapping("/manager/project-status")
-  public String newGetProjectByManager(
-      Model model, @AuthenticationPrincipal UserDetails userDetails) {
+  @Operation(
+          summary = "Get a list of projects by manager",
+          description = "Returns a list of projects of a manager",
+          operationId = "getProjectsByManager")
+  @ApiResponses(
+          value = {
+                  @ApiResponse(
+                          responseCode = "200",
+                          description = "Successful operation",
+                          content =
+                          @Content(
+                                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                  schema =
+                                  @Schema(
+                                          name = "Project",
+                                          implementation = ProjectDTO.class,
+                                          title = "Project")))
+          })
+  public List<ProjectDTO> getProjectsByManager() {
+    return projectService.findAllByProjectManagerIs();
+  }
 
-    UserDTO manager =
-        userService
-            .findByUsername(userDetails.getUsername())
-            .orElseThrow(
-                () ->
-                    new UserNotFoundException(userDetails.getUsername()));
-
-    model.addAttribute("projects", projectService.getCountedListOfProjectDTO(manager));
-
-    return "manager/project-status";
+  @PutMapping("/manager/{projectCode}/complete")
+  @Operation(
+          summary = "Complete a project",
+          description = "Complete a project",
+          operationId = "completeProject")
+  @Parameters(
+          @Parameter(
+                  name = "projectCode",
+                  description = "Project code of project to complete",
+                  example = "P1001"))
+  @ApiResponses(
+          value = {
+                  @ApiResponse(
+                          responseCode = "200",
+                          description = "Successful operation",
+                          content =
+                          @Content(
+                                  mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                  schema =
+                                  @Schema(
+                                          name = "Project",
+                                          implementation = ProjectDTO.class,
+                                          title = "Project"))),
+                  @ApiResponse(responseCode = "404", description = "Project not found", content = @Content())
+          })
+  public ProjectDTO completeProject(@PathVariable("projectCode") String projectCode) {
+    return projectService.completeProject(projectCode);
   }
 }
