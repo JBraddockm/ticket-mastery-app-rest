@@ -7,32 +7,53 @@ import org.example.exception.UserNotFoundException;
 import org.example.mapper.UserMapper;
 import org.example.model.User;
 import org.example.repository.UserRepository;
+import org.example.service.KeycloakUserService;
+import org.example.service.RoleService;
 import org.example.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
-
+  private final PasswordEncoder passwordEncoder;
   private final UserMapper userMapper;
+  private final RoleService roleService;
 
-  // TODO Reintroduce PasswordEncoder after implementing Spring Security.
-  //  private final PasswordEncoder passwordEncoder;
+  private final KeycloakUserService keycloakUserService;
 
-  public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+  public UserServiceImpl(
+      UserRepository userRepository,
+      PasswordEncoder passwordEncoder,
+      UserMapper userMapper,
+      RoleService roleService,
+      KeycloakUserService keycloakUserService) {
     this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
     this.userMapper = userMapper;
+    this.roleService = roleService;
+    this.keycloakUserService = keycloakUserService;
   }
 
   @Override
   public UserDTO save(UserDTO userDTO) {
     User user = userMapper.mapToEntity(userDTO);
-    //    user.setPassword(passwordEncoder.encode(user.getPassword()));
-    user.setPassword(userDTO.getPassword());
-    user.setEnabled(true);
     userRepository.save(user);
     return userMapper.mapToDTO(user);
+  }
+
+  @Override
+  public UserDTO create(UserDTO userDTO) {
+    // TODO Handle User creation better: Currently, it creates User in Keycloak first before
+    // password gets encoded for UserDTO
+    keycloakUserService.createUser(userDTO);
+    userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+    userDTO.setEnabled(true);
+    // TODO Retrieve role from userDTO and pass it to Keycloak
+    roleService.assignRole(
+        keycloakUserService.getUserByUsername(userDTO.getUsername()).getId(), "training-admin");
+    return this.save(userDTO);
   }
 
   @Override
@@ -57,23 +78,19 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserDTO update(UserDTO userDTO) {
-
-    // Find the user
     User user =
         userRepository
             .findByUsername(userDTO.getUsername())
             .orElseThrow(() -> new UserNotFoundException(userDTO.getUsername()));
 
-    // Get the User ID and Set it to updated user
     userDTO.setId(user.getId());
 
-    // TODO Password should not be in the user update form. A new method and controller is needed.
-    userDTO.setPassword(user.getPassword());
-    //    updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+    // TODO Change update methods and only require certain properties in the payload. Remove
+    // password.
+    userDTO.setPassword(passwordEncoder.encode(user.getPassword()));
 
     userDTO.setEnabled(true);
 
-    // Save and return the updated user
     return this.save(userDTO);
   }
 
