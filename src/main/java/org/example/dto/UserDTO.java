@@ -1,8 +1,6 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -21,9 +19,11 @@ import org.example.enums.Gender;
       fieldMatch = "confirmPassword",
       message = "Password does not match")
 })
-@Schema(name="User")
+@Schema(name = "User")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(value = {"hibernateLazyInitializer"}, ignoreUnknown = true)
+@JsonIgnoreProperties(
+    value = {"hibernateLazyInitializer"},
+    ignoreUnknown = true)
 public class UserDTO {
 
   @Schema(example = "1")
@@ -39,13 +39,17 @@ public class UserDTO {
   @Schema(example = "Brown")
   private String lastName;
 
+  @NotBlank(message = "Username cannot be empty")
+  @Schema(example = "mike")
+  private String username;
+
   @NotBlank(message = "Email cannot be empty")
   @Email(
       regexp = "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,3}",
       flags = Pattern.Flag.CASE_INSENSITIVE,
       message = "Enter a valid email address")
   @Schema(example = "info@example.org")
-  private String username;
+  private String email;
 
   @ValidPassword
   @Schema(example = "AKS_454ab3?")
