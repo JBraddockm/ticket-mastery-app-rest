@@ -16,6 +16,7 @@ import org.example.exception.UserNotFoundException;
 import org.example.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,6 +52,7 @@ public class UserController {
                     schema =
                         @Schema(name = "User", implementation = UserDTO.class, title = "User")))
       })
+  @PreAuthorize("hasAuthority('ADMIN')")
   public List<UserDTO> readAllUsers() {
     return userService.findAll();
   }
@@ -77,6 +79,7 @@ public class UserController {
                         @Schema(name = "User", implementation = UserDTO.class, title = "User"))),
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content())
       })
+  @PreAuthorize("hasAuthority('ADMIN')")
   public UserDTO getUserByUsername(@PathVariable("username") String username) {
     return userService
         .findByUsername(username)
@@ -100,8 +103,9 @@ public class UserController {
                         @Schema(name = "User", implementation = UserDTO.class, title = "User"))),
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
+  @PreAuthorize("hasAuthority('ADMIN')")
   public UserDTO createUser(@Valid @RequestBody UserDTO userDTO) {
-    return userService.save(userDTO);
+    return userService.create(userDTO);
   }
 
   @PutMapping
@@ -122,6 +126,7 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User not found", content = @Content()),
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
+  @PreAuthorize("hasAuthority('ADMIN')")
   public UserDTO updateUser(@Valid @RequestBody UserDTO userDTO) {
     return userService.update(userDTO);
   }
@@ -147,6 +152,7 @@ public class UserController {
             content = @Content()),
         @ApiResponse(responseCode = "404", description = "Invalid user value", content = @Content())
       })
+  @PreAuthorize("hasAuthority('ADMIN')")
   public void deleteUser(@PathVariable("username") String username) {
     // TODO Check if user can be deleted.
     userService.deleteByUsername(username);

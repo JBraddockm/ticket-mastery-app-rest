@@ -20,6 +20,7 @@ import org.example.exception.TaskNotFoundException;
 import org.example.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,6 +55,7 @@ public class TaskController {
                     schema =
                         @Schema(name = "Task", implementation = TaskDTO.class, title = "Task")))
       })
+  @PreAuthorize("hasAuthority('MANAGER')")
   public List<TaskDTO> readAllTasks() {
     return taskService.findAll();
   }
@@ -76,6 +78,7 @@ public class TaskController {
                         @Schema(name = "Task", implementation = TaskDTO.class, title = "Task"))),
         @ApiResponse(responseCode = "404", description = "Task not found", content = @Content())
       })
+  @PreAuthorize("hasAuthority('MANAGER')")
   public TaskDTO getTaskById(@PathVariable("taskId") Long taskId) {
     return taskService
         .findById(taskId)
@@ -102,6 +105,7 @@ public class TaskController {
                             title = "Task"))),
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
+  @PreAuthorize("hasAuthority('MANAGER')")
   public TaskDTO createTask(@Valid @RequestBody TaskProcessDTO taskProcessDTO) {
     return taskService.createTask(taskProcessDTO);
   }
@@ -128,6 +132,7 @@ public class TaskController {
         @ApiResponse(responseCode = "404", description = "Task not found", content = @Content()),
         @ApiResponse(responseCode = "422", description = "Validation Error", content = @Content())
       })
+  @PreAuthorize("hasAuthority('MANAGER')")
   public TaskDTO updateTask(
       @Valid @RequestBody TaskProcessDTO taskProcessDTO, @PathVariable("taskId") Long taskId) {
     return taskService.updateTask(taskId, taskProcessDTO);
@@ -148,6 +153,7 @@ public class TaskController {
             content = @Content()),
         @ApiResponse(responseCode = "404", description = "Invalid task value", content = @Content())
       })
+  @PreAuthorize("hasAuthority('MANAGER')")
   public void deleteTask(@PathVariable("taskId") Long taskId) {
     taskService.deleteById(taskId);
   }
@@ -168,6 +174,7 @@ public class TaskController {
                     schema =
                         @Schema(name = "Task", implementation = TaskDTO.class, title = "Task")))
       })
+  @PreAuthorize("hasAuthority('EMPLOYEE')")
   public List<TaskDTO> employeePendingTasks() {
     return taskService.findAllTasksByStatusIsNot(Status.COMPLETED);
   }
@@ -194,6 +201,7 @@ public class TaskController {
             description = "Invalid status value provided",
             content = @Content())
       })
+  @PreAuthorize("hasAuthority('EMPLOYEE')")
   public TaskDTO updateTaskStatus(
       @PathVariable("taskId") Long taskId,
       @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -228,6 +236,7 @@ public class TaskController {
                     schema =
                         @Schema(name = "Task", implementation = TaskDTO.class, title = "Task")))
       })
+  @PreAuthorize("hasAuthority('EMPLOYEE')")
   public List<TaskDTO> employeeArchivedTasks() {
     return taskService.findAllTasksByStatus(Status.COMPLETED);
   }
