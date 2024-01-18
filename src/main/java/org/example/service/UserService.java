@@ -12,6 +12,8 @@ public interface UserService {
     List<UserDTO> findAll();
     Optional<UserDTO> findByUsername(String username);
     UserDTO save(UserDTO userDTO);
+    UserDTO create(UserDTO userDTO);
+
     UserDTO update(UserDTO dto);
     void deleteByUsername(String username);
 }
