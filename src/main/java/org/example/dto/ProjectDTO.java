@@ -1,9 +1,6 @@
 package org.example.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -38,10 +35,11 @@ public class ProjectDTO {
   private String projectName;
 
   @NotBlank(message = "Add a project code")
-  @Schema(example = "PR001")
+  @Schema(example = "PR003")
   private String projectCode;
 
   @NotNull(message = "Choose a manager")
+  // TODO Use @JsonIncludeProperties to reduce payload.
   private UserDTO projectManager;
 
   @JsonIgnore
