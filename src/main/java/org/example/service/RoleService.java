@@ -9,4 +9,6 @@ public interface RoleService {
     List<RoleDTO> findAll();
 
     RoleDTO findById(Long id);
+
+    void assignRole(String userId,String roleName);
 }
