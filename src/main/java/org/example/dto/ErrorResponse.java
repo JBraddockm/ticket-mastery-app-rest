@@ -3,12 +3,12 @@ package org.example.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResponse {
   public static ResponseEntity<Object> buildErrorResponse(
