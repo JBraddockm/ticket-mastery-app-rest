@@ -27,6 +27,7 @@ import org.example.enums.Gender;
 public class UserDTO {
 
   @Schema(example = "1")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Long id;
 
   @NotBlank(message = "First name cannot be empty")
