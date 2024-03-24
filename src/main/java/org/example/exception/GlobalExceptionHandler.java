@@ -30,13 +30,13 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler({
-    UserNotFoundException.class,
     ProjectNotFoundException.class,
+    UserNotFoundException.class,
     RoleNotFoundException.class,
     TaskNotFoundException.class
   })
   public ResponseEntity<Object> handleEntityObjectNotFound(
-      UserNotFoundException e, HttpServletRequest request) {
+      Exception e, HttpServletRequest request) {
 
     return ErrorResponse.buildErrorResponse(
         HttpStatus.NOT_FOUND, "Resource Not Found", List.of(e.getMessage()), request);
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
         HttpStatus.NOT_FOUND, "Resource Not Found", List.of(e.getMessage()), request);
   }
 
-  @ExceptionHandler(Exception.class)
+//   @ExceptionHandler(Exception.class)
   public ResponseEntity<Object> handleAllUncaughtException(
       Exception e, HttpServletRequest request) {
 
