@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public Optional<UserDTO> findById(Long id) {
+    return userRepository.findById(id).map(userMapper::mapToDTO);
+  }
+
+  @Override
   public void deleteByUsername(String username) {
     this.findByUsername(username)
         .ifPresentOrElse(
