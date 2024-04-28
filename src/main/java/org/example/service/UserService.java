@@ -11,6 +11,7 @@ public interface UserService {
     List<UserDTO> findAllEmployees();
     List<UserDTO> findAll();
     Optional<UserDTO> findByUsername(String username);
+    Optional<UserDTO> findById(Long id);
     UserDTO save(UserDTO userDTO);
     UserDTO create(UserDTO userDTO);
 
