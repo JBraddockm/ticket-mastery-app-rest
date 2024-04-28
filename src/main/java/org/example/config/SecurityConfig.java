@@ -62,7 +62,6 @@ public class SecurityConfig {
       http.requiresChannel(channel -> channel.anyRequest().requiresSecure());
     }
 
-    // @formatter:off
     http.authorizeHttpRequests(
         requests ->
             requests
@@ -73,7 +72,6 @@ public class SecurityConfig {
                 .permitAll()
                 .anyRequest()
                 .authenticated());
-    // @formatter:on
 
     return http.build();
   }
