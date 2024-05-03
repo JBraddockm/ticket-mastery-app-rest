@@ -1,5 +1,11 @@
 package org.example.service.impl;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import java.util.Optional;
 import org.example.dto.UserDTO;
 import org.example.mapper.UserMapper;
 import org.example.model.User;
@@ -12,21 +18,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
 
   @Mock private UserRepository userRepository;
   @Mock private UserMapper userMapper;
 
-  @InjectMocks
-  private UserServiceImpl userService;
+  @InjectMocks private UserServiceImpl userService;
 
   @Test
   void shouldReturnAllUsers() {
@@ -68,4 +66,10 @@ class UserServiceImplTest {
     assertTrue(userDTO.isPresent());
   }
 
+  @Test
+  void shouldReturnEmptyOptionalWhenUserNotFound() {
+    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+    Optional<UserDTO> user = userService.findById(-1L);
+    assertTrue(user.isEmpty());
+  }
 }
