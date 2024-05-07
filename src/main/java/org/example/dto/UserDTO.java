@@ -3,16 +3,15 @@ package org.example.dto;
 import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.annotation.FieldsValueMatch;
 import org.example.annotation.ValidPassword;
 import org.example.enums.Gender;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @FieldsValueMatch.List({
   @FieldsValueMatch(
       field = "password",

@@ -7,16 +7,16 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import org.example.annotation.ValidDueDate;
 import org.example.enums.Status;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @ValidDueDate(
     startDate = "projectStartDate",
     endDate = "projectEndDate",

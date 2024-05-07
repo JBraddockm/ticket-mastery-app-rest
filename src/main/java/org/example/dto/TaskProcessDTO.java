@@ -6,12 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TaskProcessDTO {
 
-  @JsonIgnore
-  private Long id;
+  @JsonIgnore private Long id;
 
   @Schema(example = "PR001")
   @NotNull(message = "Choose a project")

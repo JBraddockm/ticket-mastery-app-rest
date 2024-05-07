@@ -3,13 +3,16 @@ package org.example.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.enums.Status;
 
 @Entity
 @Table(name = "tasks")
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Task extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
