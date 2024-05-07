@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+
+import org.example.annotation.ExecutionTime;
 import org.example.dto.ProjectDTO;
 import org.example.exception.ProjectNotFoundException;
 import org.example.service.ProjectService;
@@ -55,6 +57,7 @@ public class ProjectController {
                             title = "Project")))
       })
   @PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+  @ExecutionTime
   public List<ProjectDTO> readAllProjects() {
     return projectService.findAll();
   }
